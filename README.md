@@ -1,3 +1,5 @@
+<p align="center">Powered by <a href="https://github.com/tegnike/aituber-kit">AITuber Kit v2</a></p>
+
 # AITuberKit
 
 <img style="max-width: 100%;" src="./public/ogp.png">
