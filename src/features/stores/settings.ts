@@ -343,13 +343,13 @@ const settingsStore = create<SettingsState>()(
         process.env.NEXT_PUBLIC_CHARACTER_PRESET1 ||
         SYSTEM_PROMPT,
       selectedVrmPath:
-        process.env.NEXT_PUBLIC_SELECTED_VRM_PATH || '/vrm/nikechan_v1.vrm',
+        process.env.NEXT_PUBLIC_SELECTED_VRM_PATH || '/vrm/blue_suit_boy.vrm',
       selectedLive2DPath:
         process.env.NEXT_PUBLIC_SELECTED_LIVE2D_PATH ||
         '/live2d/nike01/nike01.model3.json',
       fixedCharacterPosition: false,
       characterPosition: {
-        x: 0,
+        x: 0.2, // 少し右に移動
         y: 0,
         z: 0,
         scale: 1,
@@ -453,8 +453,7 @@ const settingsStore = create<SettingsState>()(
         0.1,
 
       // Settings
-      modelType:
-        (process.env.NEXT_PUBLIC_MODEL_TYPE as 'vrm' | 'live2d') || 'vrm',
+      modelType: (process.env.NEXT_PUBLIC_MODEL_TYPE as ModelType) || 'vrm',
 
       // Live2D settings
       neutralEmotions:

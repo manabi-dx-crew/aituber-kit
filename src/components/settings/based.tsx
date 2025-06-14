@@ -32,7 +32,7 @@ const Based = () => {
       .then((res) => res.json())
       .then((files) =>
         setBackgroundFiles(
-          files.filter((file: string) => file !== 'bg-office-illustration.png')
+          files.filter((file: string) => file !== 'bg-counsellor.png')
         )
       )
       .catch((error) => {
@@ -84,7 +84,7 @@ const Based = () => {
       }
       const files = await listResponse.json()
       setBackgroundFiles(
-        files.filter((file: string) => file !== 'bg-office-illustration.png')
+        files.filter((file: string) => file !== 'bg-counsellor.png')
       )
     } catch (error) {
       console.error('Error uploading background:', error)
@@ -197,7 +197,7 @@ const Based = () => {
             }}
             disabled={isLoading || isUploading}
           >
-            <option value="/backgrounds/bg-office-illustration.png">
+            <option value="/backgrounds/bg-counsellor.png">
               {t('DefaultBackground')}
             </option>
             {backgroundFiles.map((file) => (

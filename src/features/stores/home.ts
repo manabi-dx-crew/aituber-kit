@@ -123,7 +123,7 @@ const homeStore = create<HomeState>()(
       },
       backgroundImageUrl:
         process.env.NEXT_PUBLIC_BACKGROUND_IMAGE_PATH ??
-        '/backgrounds/bg-office-illustration.png',
+        '/backgrounds/bg-counsellor.png',
       modalImage: '',
       triggerShutter: false,
       webcamStatus: false,
