@@ -32,9 +32,9 @@ export default async function handler(req: NextRequest) {
   }
   const cleanUrl = (url: string) => {
     const trimmedUrl = url.replace(/\/$/, '')
-    return trimmedUrl.endsWith('/chat-messages')
+    return trimmedUrl.endsWith('/v1/chat-messages')
       ? trimmedUrl
-      : `${trimmedUrl}/chat-messages`
+      : `${trimmedUrl}/v1/chat-messages`
   }
 
   const difyUrl = url
@@ -42,7 +42,6 @@ export default async function handler(req: NextRequest) {
     : process.env.DIFY_URL
       ? cleanUrl(process.env.DIFY_URL)
       : ''
-
   if (!difyUrl) {
     return new Response(
       JSON.stringify({
@@ -56,6 +55,17 @@ export default async function handler(req: NextRequest) {
     )
   }
 
+  // デバッグ情報をコンソールに出力
+  console.log('=== Dify API Debug Info ===')
+  console.log('Original URL from request:', url)
+  console.log('Final processed URL:', difyUrl)
+  console.log(
+    'API Key present:',
+    difyKey ? 'Yes (***' + difyKey.slice(-4) + ')' : 'No'
+  )
+  console.log('User query:', query)
+  console.log('Conversation ID:', conversationId)
+
   const headers = {
     Authorization: `Bearer ${difyKey}`,
     'Content-Type': 'application/json',
@@ -68,19 +78,37 @@ export default async function handler(req: NextRequest) {
     user: 'aituber-kit',
     files: [],
   })
-
   try {
+    console.log('Making request to Dify API...')
     const response = await fetch(difyUrl, {
       method: 'POST',
       headers: headers,
       body: body,
     })
 
+    console.log('Response received:')
+    console.log('- Status:', response.status, response.statusText)
+    console.log('- Headers:', Object.fromEntries(response.headers.entries()))
+
     if (!response.ok) {
+      let errorBody = ''
+      try {
+        errorBody = await response.text()
+        console.log('- Error body:', errorBody)
+      } catch (e) {
+        console.log('- Could not read error response body')
+      }
+
       return new Response(
         JSON.stringify({
           error: 'Dify API request failed',
           errorCode: 'AIAPIError',
+          details: {
+            status: response.status,
+            statusText: response.statusText,
+            url: difyUrl,
+            responseBody: errorBody,
+          },
         }),
         {
           status: response.status,
@@ -100,11 +128,15 @@ export default async function handler(req: NextRequest) {
       })
     }
   } catch (error) {
-    console.error('Error in Dify API call:', error)
+    console.error('Critical error in Dify API call:', error)
     return new Response(
       JSON.stringify({
         error: 'Dify Internal Server Error',
         errorCode: 'AIAPIError',
+        details: {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          url: difyUrl,
+        },
       }),
       {
         status: 500,

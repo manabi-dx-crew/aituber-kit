@@ -450,10 +450,9 @@ const settingsStore = create<SettingsState>()(
         ) || 0.1,
       nijivoiceSoundDuration:
         parseFloat(process.env.NEXT_PUBLIC_NIJIVOICE_SOUND_DURATION || '0.1') ||
-        0.1,
-
-      // Settings
-      modelType: (process.env.NEXT_PUBLIC_MODEL_TYPE as ModelType) || 'vrm',
+        0.1, // Settings
+      modelType:
+        (process.env.NEXT_PUBLIC_MODEL_TYPE as 'vrm' | 'live2d') || 'vrm',
 
       // Live2D settings
       neutralEmotions:

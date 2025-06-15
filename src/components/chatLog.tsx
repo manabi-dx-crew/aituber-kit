@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { EMOTIONS } from '@/features/messages/messages'
+import { EMOTIONS, Message } from '@/features/messages/messages'
 
 import homeStore from '@/features/stores/home'
 import settingsStore from '@/features/stores/settings'
 import { messageSelectors } from '@/features/messages/messageSelectors'
+import { handleSendChatFn } from '@/features/chat/handlers'
 
 export const ChatLog = () => {
   const chatScrollRef = useRef<HTMLDivElement>(null)
@@ -127,16 +128,26 @@ const Chat = ({
   message: string
   characterName: string
 }) => {
+  const sendChat = handleSendChatFn() // sendChatをここで定義
   const emotionPattern = new RegExp(`\\[(${EMOTIONS.join('|')})\\]\\s*`, 'gi')
   const processedMessage = message.replace(emotionPattern, '')
 
   const roleColor =
     role !== 'user' ? 'bg-secondary text-white ' : 'bg-base-light text-primary'
   const roleText = role !== 'user' ? 'text-secondary' : 'text-primary'
-  const offsetX = role === 'user' ? 'pl-10' : 'pr-10'
+
+  const handleButtonClick = (event: React.MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement
+    if (target.tagName === 'BUTTON') {
+      const message = target.dataset.message
+      if (message) {
+        sendChat(message)
+      }
+    }
+  }
 
   return (
-    <div className={`mx-auto ml-0 md:ml-10 lg:ml-20 my-4 ${offsetX}`}>
+    <div className={`mx-auto ml-0 md:ml-10 lg:ml-20 my-4`}>
       {role === 'code' ? (
         <pre className="whitespace-pre-wrap break-words bg-[#1F2937] text-white p-4 rounded-lg">
           <code className="font-mono text-sm">{message}</code>
@@ -149,9 +160,11 @@ const Chat = ({
             {role !== 'user' ? characterName || 'CHARACTER' : 'YOU'}
           </div>
           <div className="px-6 py-4 bg-white rounded-b-lg">
-            <div className={`text-base font-bold ${roleText}`}>
-              {processedMessage}
-            </div>
+            <div
+              className={`text-base font-bold ${roleText}`}
+              dangerouslySetInnerHTML={{ __html: processedMessage }}
+              onClick={handleButtonClick}
+            />
           </div>
         </>
       )}
