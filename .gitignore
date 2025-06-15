@@ -62,7 +62,13 @@ public/scripts/*
 !/public/vrm/nikechan_v1.vrm
 !/public/vrm/nikechan_v2.vrm
 !/public/vrm/nikechan_v2_outerwear.vrm
+!/public/vrm/blue_suit_boy.vrm
 
 # Background files
 /public/backgrounds/*
 !/public/backgrounds/bg-c.png
+!/public/backgrounds/bg-counsellor.png
+!/public/backgrounds/bg-office-illustration.png
+!/public/backgrounds/bg-office-manager.png
+!/public/backgrounds/bg-office-white.png
+!/public/backgrounds/bg-Virtual-office.png
