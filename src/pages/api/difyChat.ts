@@ -31,10 +31,21 @@ export default async function handler(req: NextRequest) {
     )
   }
   const cleanUrl = (url: string) => {
-    const trimmedUrl = url.replace(/\/$/, '')
-    return trimmedUrl.endsWith('/v1/chat-messages')
-      ? trimmedUrl
-      : `${trimmedUrl}/v1/chat-messages`
+    let trimmedUrl = url.replace(/\/$/, '') // Remove trailing slash
+    // Ensure the URL ends with /v1/chat-messages
+    if (trimmedUrl.endsWith('/v1')) {
+      trimmedUrl = `${trimmedUrl}/chat-messages`
+    } else if (!trimmedUrl.endsWith('/v1/chat-messages')) {
+      // If '/v1' is missing or structure is different, append /v1/chat-messages
+      // This part might need to be more robust depending on expected URL variations
+      if (trimmedUrl.includes('/v1')) {
+        const parts = trimmedUrl.split('/v1')
+        trimmedUrl = `${parts[0]}/v1/chat-messages`
+      } else {
+        trimmedUrl = `${trimmedUrl}/v1/chat-messages`
+      }
+    }
+    return trimmedUrl
   }
 
   const difyUrl = url
