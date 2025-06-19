@@ -32,6 +32,10 @@ export default async function handler(req: NextRequest) {
   }
   const cleanUrl = (url: string) => {
     let trimmedUrl = url.replace(/\/$/, '') // Remove trailing slash
+
+    // Remove port 80 if present (since your Dify runs on default port)
+    trimmedUrl = trimmedUrl.replace(':80', '')
+
     // Ensure the URL ends with /v1/chat-messages
     if (trimmedUrl.endsWith('/v1')) {
       trimmedUrl = `${trimmedUrl}/chat-messages`
@@ -47,7 +51,6 @@ export default async function handler(req: NextRequest) {
     }
     return trimmedUrl
   }
-
   const difyUrl = url
     ? cleanUrl(url)
     : process.env.DIFY_URL
@@ -81,16 +84,19 @@ export default async function handler(req: NextRequest) {
     Authorization: `Bearer ${difyKey}`,
     'Content-Type': 'application/json',
   }
+
   const body = JSON.stringify({
     inputs: {},
     query: query,
     response_mode: stream ? 'streaming' : 'blocking',
-    conversation_id: conversationId,
-    user: 'aituber-kit',
+    conversation_id: '',
+    user: 'abc-123', // Match your curl command
     files: [],
   })
+
   try {
     console.log('Making request to Dify API...')
+    console.log('Request body:', body)
     const response = await fetch(difyUrl, {
       method: 'POST',
       headers: headers,
