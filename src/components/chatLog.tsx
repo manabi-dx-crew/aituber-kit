@@ -147,53 +147,24 @@ const Chat = ({
     }
   }
 
-  // ボタン風テキストの検出と変換
-  function renderWithButtons(text: string) {
-    // 例: 「👉他に声かけのバリエーションは？」のような行をボタンに変換
-    // 先頭に「👉」があり、改行区切りで複数行ある場合を想定
-    const lines = text.split(/\n/)
-    return lines.map((line, idx) => {
-      const match = line.match(/^([👉👍]\s*)(.+)$/)
-      if (match) {
-        return (
-          <button
-            key={idx}
-            data-message={match[2]}
-            onClick={handleButtonClick}
-            className="block w-full text-left bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl px-4 py-3 my-2 shadow-md transition-colors duration-150"
-          >
-            {match[1]}
-            {match[2]}
-          </button>
-        )
-      }
-      return (
-        <span key={idx}>
-          {line}
-          {idx !== lines.length - 1 && <br />}
-        </span>
-      )
-    })
-  }
+  // HTMLボタンタグとMarkdownテキストの分離と変換
+  function parseMessageContent(text: string) {
+    // HTMLボタンタグのパターンを検出
+    const buttonRegex =
+      /<button\s+data-message="([^"]*)"(?:\s+data-variant="[^"]*")?>\s*([^<]*?)\s*<\/button>/gi
 
-  return (
-    <div className={`mx-auto ml-0 md:ml-10 lg:ml-20 my-4`}>
-      {role === 'code' ? (
-        <pre className="whitespace-pre-wrap break-words bg-[#1F2937] text-white p-4 rounded-lg">
-          <code className="font-mono text-sm">{message}</code>
-        </pre>
-      ) : (
-        <>
-          <div
-            className={`px-6 py-2 rounded-t-lg font-bold tracking-wider ${roleColor}`}
-          >
-            {role !== 'user' ? characterName || 'CHARACTER' : 'YOU'}
-          </div>
-          <div className="px-6 py-4 bg-white rounded-b-lg">
-            <div className={`text-base font-bold ${roleText}`}>
-              {/* ボタンテキスト優先で変換し、残りはMarkdownで表示 */}
-              {renderWithButtons(processedMessage)}
-              {/* マークダウン部分 */}
+    const elements: JSX.Element[] = []
+    let lastIndex = 0
+    let match
+
+    // HTMLボタンタグを検出してReactボタンに変換
+    while ((match = buttonRegex.exec(text)) !== null) {
+      // ボタンの前のテキスト部分を追加
+      if (match.index > lastIndex) {
+        const beforeText = text.substring(lastIndex, match.index).trim()
+        if (beforeText) {
+          elements.push(
+            <div key={`text-${lastIndex}`} className="mb-2">
               <ReactMarkdown
                 components={{
                   strong: ({ node, ...props }) => (
@@ -216,8 +187,148 @@ const Chat = ({
                   ),
                 }}
               >
-                {processedMessage}
+                {beforeText}
               </ReactMarkdown>
+            </div>
+          )
+        }
+      }
+
+      // ボタンを作成
+      const message = match[1]
+      const buttonText = match[2]
+
+      elements.push(
+        <button
+          key={`button-${match.index}`}
+          data-message={message}
+          onClick={handleButtonClick}
+          className="block w-full text-left bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl px-4 py-3 my-2 shadow-md transition-colors duration-150"
+        >
+          {buttonText}
+        </button>
+      )
+
+      lastIndex = match.index + match[0].length
+    }
+
+    // 残りのテキスト部分を追加
+    if (lastIndex < text.length) {
+      const remainingText = text.substring(lastIndex).trim()
+      if (remainingText) {
+        elements.push(
+          <div key={`text-${lastIndex}`}>
+            <ReactMarkdown
+              components={{
+                strong: ({ node, ...props }) => (
+                  <strong className="font-bold" {...props} />
+                ),
+                h1: ({ node, ...props }) => (
+                  <h1 className="text-2xl font-bold my-2" {...props} />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2 className="text-xl font-bold my-2" {...props} />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3 className="text-lg font-bold my-2" {...props} />
+                ),
+                li: ({ node, ...props }) => (
+                  <li className="list-disc ml-6" {...props} />
+                ),
+                code: ({ node, ...props }) => (
+                  <code className="bg-gray-100 rounded px-1" {...props} />
+                ),
+              }}
+            >
+              {remainingText}
+            </ReactMarkdown>
+          </div>
+        )
+      }
+    }
+
+    // HTMLボタンタグが見つからない場合は、元のテキスト全体をMarkdownとして処理
+    if (elements.length === 0) {
+      // 👉や👍で始まる行をボタンに変換する既存の機能も維持
+      const lines = text.split(/\n/)
+      const hasEmojiButtons = lines.some((line) =>
+        line.match(/^([👉👍]\s*)(.+)$/)
+      )
+
+      if (hasEmojiButtons) {
+        return lines.map((line, idx) => {
+          const emojiMatch = line.match(/^([👉👍]\s*)(.+)$/)
+          if (emojiMatch) {
+            return (
+              <button
+                key={idx}
+                data-message={emojiMatch[2]}
+                onClick={handleButtonClick}
+                className="block w-full text-left bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl px-4 py-3 my-2 shadow-md transition-colors duration-150"
+              >
+                {emojiMatch[1]}
+                {emojiMatch[2]}
+              </button>
+            )
+          }
+          return (
+            <span key={idx}>
+              {line}
+              {idx !== lines.length - 1 && <br />}
+            </span>
+          )
+        })
+      }
+
+      elements.push(
+        <ReactMarkdown
+          key="markdown-full"
+          components={{
+            strong: ({ node, ...props }) => (
+              <strong className="font-bold" {...props} />
+            ),
+            h1: ({ node, ...props }) => (
+              <h1 className="text-2xl font-bold my-2" {...props} />
+            ),
+            h2: ({ node, ...props }) => (
+              <h2 className="text-xl font-bold my-2" {...props} />
+            ),
+            h3: ({ node, ...props }) => (
+              <h3 className="text-lg font-bold my-2" {...props} />
+            ),
+            li: ({ node, ...props }) => (
+              <li className="list-disc ml-6" {...props} />
+            ),
+            code: ({ node, ...props }) => (
+              <code className="bg-gray-100 rounded px-1" {...props} />
+            ),
+          }}
+        >
+          {text}
+        </ReactMarkdown>
+      )
+    }
+
+    return elements
+  }
+
+  return (
+    <div className={`mx-auto ml-0 md:ml-10 lg:ml-20 my-4`}>
+      {role === 'code' ? (
+        <pre className="whitespace-pre-wrap break-words bg-[#1F2937] text-white p-4 rounded-lg">
+          <code className="font-mono text-sm">{message}</code>
+        </pre>
+      ) : (
+        <>
+          <div
+            className={`px-6 py-2 rounded-t-lg font-bold tracking-wider ${roleColor}`}
+          >
+            {role !== 'user' ? characterName || 'CHARACTER' : 'YOU'}
+          </div>
+          <div className="px-6 py-4 bg-white rounded-b-lg">
+            <div className={`text-base font-bold ${roleText}`}>
+              {/* HTMLボタンタグとマークダウンの適切な処理 */}
+              {parseMessageContent(processedMessage)}
             </div>
           </div>
         </>
