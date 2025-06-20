@@ -31,7 +31,7 @@ export const IconButton = ({
       {' '}
       {isProcessing ? (
         <pixiv-icon
-          name={(isProcessingIcon || '24/Dot') as string}
+          name={(isProcessingIcon || '24/Dot') as any}
           scale="1"
         ></pixiv-icon>
       ) : iconName === 'screen-share' ? (
@@ -44,7 +44,7 @@ export const IconButton = ({
       ) : iconName === 'stop' ? (
         <Image src="/images/icons/stop.svg" alt="stop" width={24} height={24} />
       ) : (
-        <pixiv-icon name={iconName as string} scale="1"></pixiv-icon>
+        <pixiv-icon name={iconName as any} scale="1"></pixiv-icon>
       )}
       {label && <div className="mx-2 font-bold">{label}</div>}
     </button>

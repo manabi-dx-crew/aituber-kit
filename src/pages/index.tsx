@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Form } from '@/components/form'
 import MessageReceiver from '@/components/messageReceiver'
@@ -17,6 +17,9 @@ import '@/lib/i18n'
 import { buildUrl } from '@/utils/buildUrl'
 import { YoutubeManager } from '@/components/youtubeManager'
 import toastStore from '@/features/stores/toast'
+import { KnownIconType } from '@charcoal-ui/icons'
+import { ButtonHTMLAttributes } from 'react'
+import Image from 'next/image'
 
 const Home = () => {
   const webcamStatus = homeStore((s) => s.webcamStatus)
@@ -86,7 +89,7 @@ const Home = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [characterPresets, t])
 
   return (
     <div className="h-[100svh] bg-cover" style={{ backgroundImage: bgUrl }}>
