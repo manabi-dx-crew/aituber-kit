@@ -18,7 +18,7 @@ export default async function handler(req: NextRequest) {
     )
   }
 
-  const { query, apiKey, url, conversationId, stream } = await req.json()
+  const { query, apiKey, url, conversation_id: conversationId, stream } = await req.json()
 
   const difyKey = apiKey || process.env.DIFY_KEY || process.env.DIFY_API_KEY
   if (!difyKey) {

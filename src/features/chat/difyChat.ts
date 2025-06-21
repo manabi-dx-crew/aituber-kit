@@ -67,14 +67,19 @@ export async function getDifyChatResponseStream(
                 const jsonStr = line.slice(5) // 'data:' プレフィックスを除去
                 try {
                   const data = JSON.parse(jsonStr)
+
+                  // conversation_id が存在する場合、ストアを更新
+                  if (data.conversation_id) {
+                    settingsStore.setState({
+                      difyConversationId: data.conversation_id,
+                    })
+                  }
+
                   if (
                     data.event === 'agent_message' ||
                     data.event === 'message'
                   ) {
                     controller.enqueue(data.answer)
-                    settingsStore.setState({
-                      difyConversationId: data.conversation_id,
-                    })
                   }
                 } catch (error) {
                   console.error('Error parsing JSON:', error)
