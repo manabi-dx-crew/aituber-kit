@@ -1,153 +1,153 @@
-import { useTranslation } from 'react-i18next'
-import { useState, useEffect, useCallback } from 'react'
-import Image from 'next/image'
+import { useTranslation } from "react-i18next";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 import {
   PRESET_A,
   PRESET_B,
   PRESET_C,
   PRESET_D,
-} from '@/features/constants/koeiroParam'
+} from "@/features/constants/koeiroParam";
 import {
   AIVoice,
   OpenAITTSVoice,
   OpenAITTSModel,
-} from '@/features/constants/settings'
-import { getOpenAITTSModels } from '@/features/constants/aiModels'
-import { testVoice } from '@/features/messages/speakCharacter'
-import settingsStore from '@/features/stores/settings'
-import { Link } from '../link'
-import { TextButton } from '../textButton'
-import speakers from '../speakers.json'
+} from "@/features/constants/settings";
+import { getOpenAITTSModels } from "@/features/constants/aiModels";
+import { testVoice } from "@/features/messages/speakCharacter";
+import settingsStore from "@/features/stores/settings";
+import { Link } from "../link";
+import { TextButton } from "../textButton";
+import speakers from "../speakers.json";
 // import speakers_aivis from '../speakers_aivis.json'
 
 const Voice = () => {
-  const koeiromapKey = settingsStore((s) => s.koeiromapKey)
-  const elevenlabsApiKey = settingsStore((s) => s.elevenlabsApiKey)
+  const koeiromapKey = settingsStore((s) => s.koeiromapKey);
+  const elevenlabsApiKey = settingsStore((s) => s.elevenlabsApiKey);
 
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
-  const audioMode = settingsStore((s) => s.audioMode)
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
+  const audioMode = settingsStore((s) => s.audioMode);
 
-  const selectVoice = settingsStore((s) => s.selectVoice)
-  const koeiroParam = settingsStore((s) => s.koeiroParam)
-  const googleTtsType = settingsStore((s) => s.googleTtsType)
-  const voicevoxSpeaker = settingsStore((s) => s.voicevoxSpeaker)
-  const voicevoxSpeed = settingsStore((s) => s.voicevoxSpeed)
-  const voicevoxPitch = settingsStore((s) => s.voicevoxPitch)
-  const voicevoxIntonation = settingsStore((s) => s.voicevoxIntonation)
-  const voicevoxServerUrl = settingsStore((s) => s.voicevoxServerUrl)
-  const aivisSpeechSpeaker = settingsStore((s) => s.aivisSpeechSpeaker)
-  const aivisSpeechSpeed = settingsStore((s) => s.aivisSpeechSpeed)
-  const aivisSpeechPitch = settingsStore((s) => s.aivisSpeechPitch)
-  const aivisSpeechIntonation = settingsStore((s) => s.aivisSpeechIntonation)
-  const aivisSpeechServerUrl = settingsStore((s) => s.aivisSpeechServerUrl)
+  const selectVoice = settingsStore((s) => s.selectVoice);
+  const koeiroParam = settingsStore((s) => s.koeiroParam);
+  const googleTtsType = settingsStore((s) => s.googleTtsType);
+  const voicevoxSpeaker = settingsStore((s) => s.voicevoxSpeaker);
+  const voicevoxSpeed = settingsStore((s) => s.voicevoxSpeed);
+  const voicevoxPitch = settingsStore((s) => s.voicevoxPitch);
+  const voicevoxIntonation = settingsStore((s) => s.voicevoxIntonation);
+  const voicevoxServerUrl = settingsStore((s) => s.voicevoxServerUrl);
+  const aivisSpeechSpeaker = settingsStore((s) => s.aivisSpeechSpeaker);
+  const aivisSpeechSpeed = settingsStore((s) => s.aivisSpeechSpeed);
+  const aivisSpeechPitch = settingsStore((s) => s.aivisSpeechPitch);
+  const aivisSpeechIntonation = settingsStore((s) => s.aivisSpeechIntonation);
+  const aivisSpeechServerUrl = settingsStore((s) => s.aivisSpeechServerUrl);
   const stylebertvits2ServerUrl = settingsStore(
-    (s) => s.stylebertvits2ServerUrl
-  )
-  const stylebertvits2ApiKey = settingsStore((s) => s.stylebertvits2ApiKey)
-  const stylebertvits2ModelId = settingsStore((s) => s.stylebertvits2ModelId)
-  const stylebertvits2Style = settingsStore((s) => s.stylebertvits2Style)
-  const stylebertvits2SdpRatio = settingsStore((s) => s.stylebertvits2SdpRatio)
-  const stylebertvits2Length = settingsStore((s) => s.stylebertvits2Length)
-  const gsviTtsServerUrl = settingsStore((s) => s.gsviTtsServerUrl)
-  const gsviTtsModelId = settingsStore((s) => s.gsviTtsModelId)
-  const gsviTtsBatchSize = settingsStore((s) => s.gsviTtsBatchSize)
-  const gsviTtsSpeechRate = settingsStore((s) => s.gsviTtsSpeechRate)
-  const elevenlabsVoiceId = settingsStore((s) => s.elevenlabsVoiceId)
-  const openaiAPIKey = settingsStore((s) => s.openaiKey)
-  const openaiTTSVoice = settingsStore((s) => s.openaiTTSVoice)
-  const openaiTTSModel = settingsStore((s) => s.openaiTTSModel)
-  const openaiTTSSpeed = settingsStore((s) => s.openaiTTSSpeed)
-  const azureTTSKey = settingsStore((s) => s.azureTTSKey)
-  const azureTTSEndpoint = settingsStore((s) => s.azureTTSEndpoint)
-  const nijivoiceApiKey = settingsStore((s) => s.nijivoiceApiKey)
-  const nijivoiceActorId = settingsStore((s) => s.nijivoiceActorId)
-  const nijivoiceSpeed = settingsStore((s) => s.nijivoiceSpeed)
+    (s) => s.stylebertvits2ServerUrl,
+  );
+  const stylebertvits2ApiKey = settingsStore((s) => s.stylebertvits2ApiKey);
+  const stylebertvits2ModelId = settingsStore((s) => s.stylebertvits2ModelId);
+  const stylebertvits2Style = settingsStore((s) => s.stylebertvits2Style);
+  const stylebertvits2SdpRatio = settingsStore((s) => s.stylebertvits2SdpRatio);
+  const stylebertvits2Length = settingsStore((s) => s.stylebertvits2Length);
+  const gsviTtsServerUrl = settingsStore((s) => s.gsviTtsServerUrl);
+  const gsviTtsModelId = settingsStore((s) => s.gsviTtsModelId);
+  const gsviTtsBatchSize = settingsStore((s) => s.gsviTtsBatchSize);
+  const gsviTtsSpeechRate = settingsStore((s) => s.gsviTtsSpeechRate);
+  const elevenlabsVoiceId = settingsStore((s) => s.elevenlabsVoiceId);
+  const openaiAPIKey = settingsStore((s) => s.openaiKey);
+  const openaiTTSVoice = settingsStore((s) => s.openaiTTSVoice);
+  const openaiTTSModel = settingsStore((s) => s.openaiTTSModel);
+  const openaiTTSSpeed = settingsStore((s) => s.openaiTTSSpeed);
+  const azureTTSKey = settingsStore((s) => s.azureTTSKey);
+  const azureTTSEndpoint = settingsStore((s) => s.azureTTSEndpoint);
+  const nijivoiceApiKey = settingsStore((s) => s.nijivoiceApiKey);
+  const nijivoiceActorId = settingsStore((s) => s.nijivoiceActorId);
+  const nijivoiceSpeed = settingsStore((s) => s.nijivoiceSpeed);
   const nijivoiceEmotionalLevel = settingsStore(
-    (s) => s.nijivoiceEmotionalLevel
-  )
-  const nijivoiceSoundDuration = settingsStore((s) => s.nijivoiceSoundDuration)
+    (s) => s.nijivoiceEmotionalLevel,
+  );
+  const nijivoiceSoundDuration = settingsStore((s) => s.nijivoiceSoundDuration);
 
-  const { t } = useTranslation()
-  const [nijivoiceSpeakers, setNijivoiceSpeakers] = useState<Array<any>>([])
-  const [prevNijivoiceActorId, setPrevNijivoiceActorId] = useState<string>('')
-  const [speakers_aivis, setSpeakers_aivis] = useState<Array<any>>([])
-  const [customVoiceText, setCustomVoiceText] = useState<string>('')
+  const { t } = useTranslation();
+  const [nijivoiceSpeakers, setNijivoiceSpeakers] = useState<Array<any>>([]);
+  const [prevNijivoiceActorId, setPrevNijivoiceActorId] = useState<string>("");
+  const [speakers_aivis, setSpeakers_aivis] = useState<Array<any>>([]);
+  const [customVoiceText, setCustomVoiceText] = useState<string>("");
 
   // にじボイスの話者一覧を取得する関数
   const fetchNijivoiceSpeakers = useCallback(async () => {
     try {
       const response = await fetch(
-        `/api/get-nijivoice-actors?apiKey=${nijivoiceApiKey}`
-      )
-      const data = await response.json()
+        `/api/get-nijivoice-actors?apiKey=${nijivoiceApiKey}`,
+      );
+      const data = await response.json();
       if (data.voiceActors) {
         const sortedActors = data.voiceActors.sort(
-          (a: any, b: any) => a.id - b.id
-        )
-        setNijivoiceSpeakers(sortedActors)
+          (a: any, b: any) => a.id - b.id,
+        );
+        setNijivoiceSpeakers(sortedActors);
       }
     } catch (error) {
-      console.error('Failed to fetch nijivoice speakers:', error)
+      console.error("Failed to fetch nijivoice speakers:", error);
     }
-  }, [nijivoiceApiKey])
+  }, [nijivoiceApiKey]);
 
   // AIVISの話者一覧を取得する関数
   const fetchAivisSpeakers = async () => {
     try {
-      const response = await fetch('/speakers_aivis.json')
-      const data = await response.json()
-      setSpeakers_aivis(data)
+      const response = await fetch("/speakers_aivis.json");
+      const data = await response.json();
+      setSpeakers_aivis(data);
     } catch (error) {
-      console.error('Failed to fetch AIVIS speakers:', error)
+      console.error("Failed to fetch AIVIS speakers:", error);
     }
-  }
+  };
 
   // コンポーネントマウント時またはにじボイス選択時に話者一覧を取得
   useEffect(() => {
-    if (selectVoice === 'nijivoice') {
-      fetchNijivoiceSpeakers()
+    if (selectVoice === "nijivoice") {
+      fetchNijivoiceSpeakers();
     }
-  }, [selectVoice, nijivoiceApiKey, fetchNijivoiceSpeakers])
+  }, [selectVoice, nijivoiceApiKey, fetchNijivoiceSpeakers]);
 
   // コンポーネントマウント時またはAIVIS選択時に話者一覧を取得
   useEffect(() => {
-    if (selectVoice === 'aivis_speech') {
-      fetchAivisSpeakers()
+    if (selectVoice === "aivis_speech") {
+      fetchAivisSpeakers();
     }
-  }, [selectVoice])
+  }, [selectVoice]);
 
   // nijivoiceActorIdが変更された時にrecommendedVoiceSpeedを設定する処理を追加
   useEffect(() => {
     if (
-      selectVoice === 'nijivoice' &&
+      selectVoice === "nijivoice" &&
       nijivoiceActorId &&
       nijivoiceActorId !== prevNijivoiceActorId
     ) {
       // 現在選択されていキャラクターを探す
       const selectedActor = nijivoiceSpeakers.find(
-        (actor) => actor.id === nijivoiceActorId
-      )
+        (actor) => actor.id === nijivoiceActorId,
+      );
 
       // キャラクターが見つかり、recommendedVoiceSpeedが設定されている場合
       if (selectedActor?.recommendedVoiceSpeed) {
         settingsStore.setState({
           nijivoiceSpeed: selectedActor.recommendedVoiceSpeed,
-        })
+        });
       }
 
       // 前回の選択を更新
-      setPrevNijivoiceActorId(nijivoiceActorId)
+      setPrevNijivoiceActorId(nijivoiceActorId);
     }
-  }, [nijivoiceActorId, nijivoiceSpeakers, prevNijivoiceActorId, selectVoice])
+  }, [nijivoiceActorId, nijivoiceSpeakers, prevNijivoiceActorId, selectVoice]);
 
   // 追加: realtimeAPIMode または audioMode が true の場合にメッセージを表示
   if (realtimeAPIMode || audioMode) {
     return (
       <div className="text-center text-xl whitespace-pre-line">
-        {t('CannotUseVoice')}
+        {t("CannotUseVoice")}
       </div>
-    )
+    );
   }
 
   return (
@@ -160,12 +160,12 @@ const Voice = () => {
           height={24}
           className="mr-2"
         />
-        <h2 className="text-2xl font-bold">{t('VoiceSettings')}</h2>
+        <h2 className="text-2xl font-bold">{t("VoiceSettings")}</h2>
       </div>
       <div className="mb-4 text-xl font-bold">
-        {t('SyntheticVoiceEngineChoice')}
+        {t("SyntheticVoiceEngineChoice")}
       </div>
-      <div>{t('VoiceEngineInstruction')}</div>
+      <div>{t("VoiceEngineInstruction")}</div>
       <div className="my-2">
         <select
           value={selectVoice}
@@ -174,27 +174,27 @@ const Voice = () => {
           }
           className="px-4 py-2 bg-white hover:bg-white-hover rounded-lg"
         >
-          <option value="voicevox">{t('UsingVoiceVox')}</option>
-          <option value="koeiromap">{t('UsingKoeiromap')}</option>
-          <option value="google">{t('UsingGoogleTTS')}</option>
-          <option value="stylebertvits2">{t('UsingStyleBertVITS2')}</option>
-          <option value="aivis_speech">{t('UsingAivisSpeech')}</option>
-          <option value="gsvitts">{t('UsingGSVITTS')}</option>
-          <option value="elevenlabs">{t('UsingElevenLabs')}</option>
-          <option value="openai">{t('UsingOpenAITTS')}</option>
-          <option value="azure">{t('UsingAzureTTS')}</option>
-          <option value="nijivoice">{t('UsingNijiVoice')}</option>
+          <option value="voicevox">{t("UsingVoiceVox")}</option>
+          <option value="koeiromap">{t("UsingKoeiromap")}</option>
+          <option value="google">{t("UsingGoogleTTS")}</option>
+          <option value="stylebertvits2">{t("UsingStyleBertVITS2")}</option>
+          <option value="aivis_speech">{t("UsingAivisSpeech")}</option>
+          <option value="gsvitts">{t("UsingGSVITTS")}</option>
+          <option value="elevenlabs">{t("UsingElevenLabs")}</option>
+          <option value="openai">{t("UsingOpenAITTS")}</option>
+          <option value="azure">{t("UsingAzureTTS")}</option>
+          <option value="nijivoice">{t("UsingNijiVoice")}</option>
         </select>
       </div>
 
       <div className="mt-10">
-        <div className="mb-4 text-xl font-bold">{t('VoiceAdjustment')}</div>
+        <div className="mb-4 text-xl font-bold">{t("VoiceAdjustment")}</div>
         {(() => {
-          if (selectVoice === 'koeiromap') {
+          if (selectVoice === "koeiromap") {
             return (
               <>
                 <div>
-                  {t('KoeiromapInfo')}
+                  {t("KoeiromapInfo")}
                   <br />
                   <Link
                     url="https://koemotion.rinna.co.jp"
@@ -280,7 +280,7 @@ const Voice = () => {
                           speakerX: Number(e.target.value),
                           speakerY: koeiroParam.speakerY,
                         },
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">y : {koeiroParam.speakerY}</div>
@@ -297,24 +297,24 @@ const Voice = () => {
                           speakerX: koeiroParam.speakerX,
                           speakerY: Number(e.target.value),
                         },
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
-          } else if (selectVoice === 'voicevox') {
+            );
+          } else if (selectVoice === "voicevox") {
             return (
               <>
                 <div>
-                  {t('VoiceVoxInfo')}
+                  {t("VoiceVoxInfo")}
                   <br />
                   <Link
                     url="https://voicevox.hiroshiba.jp/"
                     label="https://voicevox.hiroshiba.jp/"
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('VoicevoxServerUrl')}</div>
+                <div className="mt-4 font-bold">{t("VoicevoxServerUrl")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -328,7 +328,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('SpeakerSelection')}</div>
+                <div className="mt-4 font-bold">{t("SpeakerSelection")}</div>
                 <div className="flex items-center">
                   <select
                     value={voicevoxSpeaker}
@@ -339,7 +339,7 @@ const Voice = () => {
                     }
                     className="px-4 py-2 bg-white hover:bg-white-hover rounded-lg"
                   >
-                    <option value="">{t('Select')}</option>
+                    <option value="">{t("Select")}</option>
                     {speakers.map((speaker) => (
                       <option key={speaker.id} value={speaker.id}>
                         {speaker.speaker}
@@ -349,7 +349,7 @@ const Voice = () => {
                 </div>
                 <div className="mt-6 font-bold">
                   <div className="select-none">
-                    {t('VoicevoxSpeed')}: {voicevoxSpeed}
+                    {t("VoicevoxSpeed")}: {voicevoxSpeed}
                   </div>
                   <input
                     type="range"
@@ -361,11 +361,11 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxSpeed: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
-                    {t('VoicevoxPitch')}: {voicevoxPitch}
+                    {t("VoicevoxPitch")}: {voicevoxPitch}
                   </div>
                   <input
                     type="range"
@@ -377,11 +377,11 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxPitch: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
-                    {t('VoicevoxIntonation')}: {voicevoxIntonation}
+                    {t("VoicevoxIntonation")}: {voicevoxIntonation}
                   </div>
                   <input
                     type="range"
@@ -393,18 +393,18 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxIntonation: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
-          } else if (selectVoice === 'google') {
+            );
+          } else if (selectVoice === "google") {
             return (
               <>
                 <div>
-                  {t('GoogleTTSInfo')}
-                  {t('AuthFileInstruction')}
+                  {t("GoogleTTSInfo")}
+                  {t("AuthFileInstruction")}
                   <br />
                   <Link
                     url="https://developers.google.com/workspace/guides/create-credentials?#create_credentials_for_a_service_account"
@@ -412,14 +412,14 @@ const Voice = () => {
                   />
                   <br />
                   <br />
-                  {t('LanguageModelURL')}
+                  {t("LanguageModelURL")}
                   <br />
                   <Link
                     url="https://cloud.google.com/text-to-speech/docs/voices"
                     label="https://cloud.google.com/text-to-speech/docs/voices"
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('LanguageChoice')}</div>
+                <div className="mt-4 font-bold">{t("LanguageChoice")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -432,12 +432,12 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
-          } else if (selectVoice === 'stylebertvits2') {
+            );
+          } else if (selectVoice === "stylebertvits2") {
             return (
               <>
                 <div>
-                  {t('StyleBertVITS2Info')}
+                  {t("StyleBertVITS2Info")}
                   <br />
                   <Link
                     url="https://github.com/litagin02/Style-Bert-VITS2"
@@ -447,7 +447,7 @@ const Voice = () => {
                   <br />
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('StyleBeatVITS2ServerURL')}
+                  {t("StyleBeatVITS2ServerURL")}
                 </div>
                 <div className="mt-2">
                   <input
@@ -463,7 +463,7 @@ const Voice = () => {
                   />
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('StyleBeatVITS2ApiKey')}
+                  {t("StyleBeatVITS2ApiKey")}
                 </div>
                 <div className="mt-2">
                   <input
@@ -479,7 +479,7 @@ const Voice = () => {
                   />
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('StyleBeatVITS2ModelID')}
+                  {t("StyleBeatVITS2ModelID")}
                 </div>
                 <div className="mt-2">
                   <input
@@ -494,7 +494,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('StyleBeatVITS2Style')}</div>
+                <div className="mt-4 font-bold">{t("StyleBeatVITS2Style")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -509,7 +509,7 @@ const Voice = () => {
                   />
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('StyleBeatVITS2SdpRatio')}: {stylebertvits2SdpRatio}
+                  {t("StyleBeatVITS2SdpRatio")}: {stylebertvits2SdpRatio}
                 </div>
                 <input
                   type="range"
@@ -521,11 +521,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       stylebertvits2SdpRatio: Number(e.target.value),
-                    })
+                    });
                   }}
                 ></input>
                 <div className="mt-4 font-bold">
-                  {t('StyleBeatVITS2Length')}: {stylebertvits2Length}
+                  {t("StyleBeatVITS2Length")}: {stylebertvits2Length}
                 </div>
                 <input
                   type="range"
@@ -537,16 +537,16 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       stylebertvits2Length: Number(e.target.value),
-                    })
+                    });
                   }}
                 ></input>
               </>
-            )
-          } else if (selectVoice === 'aivis_speech') {
+            );
+          } else if (selectVoice === "aivis_speech") {
             return (
               <>
                 <div>
-                  {t('AivisSpeechInfo')}
+                  {t("AivisSpeechInfo")}
                   <br />
                   <Link
                     url="https://aivis-project.com/"
@@ -554,7 +554,7 @@ const Voice = () => {
                   />
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('AivisSpeechServerUrl')}
+                  {t("AivisSpeechServerUrl")}
                 </div>
                 <div className="mt-2">
                   <input
@@ -569,7 +569,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('AivisSpeechSpeaker')}</div>
+                <div className="mt-4 font-bold">{t("AivisSpeechSpeaker")}</div>
                 <div className="flex items-center">
                   <select
                     value={aivisSpeechSpeaker}
@@ -580,7 +580,7 @@ const Voice = () => {
                     }
                     className="px-4 py-2 bg-white hover:bg-white-hover rounded-lg"
                   >
-                    <option value="">{t('Select')}</option>
+                    <option value="">{t("Select")}</option>
                     {speakers_aivis.map((speaker) => (
                       <option key={speaker.id} value={speaker.id}>
                         {speaker.speaker}
@@ -591,28 +591,28 @@ const Voice = () => {
                   <TextButton
                     onClick={async () => {
                       const response = await fetch(
-                        '/api/update-aivis-speakers?serverUrl=' +
-                          aivisSpeechServerUrl
-                      )
+                        "/api/update-aivis-speakers?serverUrl=" +
+                          aivisSpeechServerUrl,
+                      );
                       if (response.ok) {
                         // 話者リストを再読み込み
                         const updatedSpeakersResponse = await fetch(
-                          '/speakers_aivis.json'
-                        )
+                          "/speakers_aivis.json",
+                        );
                         const updatedSpeakers =
-                          await updatedSpeakersResponse.json()
+                          await updatedSpeakersResponse.json();
                         // speakers_aivisを更新
-                        setSpeakers_aivis(updatedSpeakers)
+                        setSpeakers_aivis(updatedSpeakers);
                       }
                     }}
                     className="ml-4"
                   >
-                    {t('UpdateSpeakerList')}
+                    {t("UpdateSpeakerList")}
                   </TextButton>
                 </div>
                 <div className="mt-6 font-bold">
                   <div className="select-none">
-                    {t('AivisSpeechSpeed')}: {aivisSpeechSpeed}
+                    {t("AivisSpeechSpeed")}: {aivisSpeechSpeed}
                   </div>
                   <input
                     type="range"
@@ -624,11 +624,11 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechSpeed: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
-                    {t('AivisSpeechPitch')}: {aivisSpeechPitch}
+                    {t("AivisSpeechPitch")}: {aivisSpeechPitch}
                   </div>
                   <input
                     type="range"
@@ -640,11 +640,11 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechPitch: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
-                    {t('AivisSpeechIntonation')}: {aivisSpeechIntonation}
+                    {t("AivisSpeechIntonation")}: {aivisSpeechIntonation}
                   </div>
                   <input
                     type="range"
@@ -656,17 +656,17 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechIntonation: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
-          } else if (selectVoice === 'gsvitts') {
+            );
+          } else if (selectVoice === "gsvitts") {
             return (
               <>
-                <div>{t('GSVITTSInfo')}</div>
-                <div className="mt-4 font-bold">{t('GSVITTSServerUrl')}</div>
+                <div>{t("GSVITTSInfo")}</div>
+                <div className="mt-4 font-bold">{t("GSVITTSServerUrl")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -680,7 +680,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('GSVITTSModelID')}</div>
+                <div className="mt-4 font-bold">{t("GSVITTSModelID")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -692,7 +692,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('GSVITTSBatchSize')}</div>
+                <div className="mt-4 font-bold">{t("GSVITTSBatchSize")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -707,7 +707,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('GSVITTSSpeechRate')}</div>
+                <div className="mt-4 font-bold">{t("GSVITTSSpeechRate")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -723,12 +723,12 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
-          } else if (selectVoice === 'elevenlabs') {
+            );
+          } else if (selectVoice === "elevenlabs") {
             return (
               <>
                 <div>
-                  {t('ElevenLabsInfo')}
+                  {t("ElevenLabsInfo")}
                   <br />
                   <Link
                     url="https://elevenlabs.io/api"
@@ -736,7 +736,7 @@ const Voice = () => {
                   />
                   <br />
                 </div>
-                <div className="mt-4 font-bold">{t('ElevenLabsApiKey')}</div>
+                <div className="mt-4 font-bold">{t("ElevenLabsApiKey")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -750,9 +750,9 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('ElevenLabsVoiceId')}</div>
+                <div className="mt-4 font-bold">{t("ElevenLabsVoiceId")}</div>
                 <div className="mt-2">
-                  {t('ElevenLabsVoiceIdInfo')}
+                  {t("ElevenLabsVoiceIdInfo")}
                   <br />
                   <Link
                     url="https://api.elevenlabs.io/v1/voices"
@@ -774,12 +774,12 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
-          } else if (selectVoice === 'openai') {
+            );
+          } else if (selectVoice === "openai") {
             return (
               <>
-                <div>{t('OpenAITTSInfo')}</div>
-                <div className="mt-4 font-bold">{t('OpenAIAPIKeyLabel')}</div>
+                <div>{t("OpenAITTSInfo")}</div>
+                <div className="mt-4 font-bold">{t("OpenAIAPIKeyLabel")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -793,7 +793,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('OpenAITTSVoice')}</div>
+                <div className="mt-4 font-bold">{t("OpenAITTSVoice")}</div>
                 <div className="mt-2">
                   <select
                     value={openaiTTSVoice}
@@ -816,7 +816,7 @@ const Voice = () => {
                     <option value="shimmer">shimmer</option>
                   </select>
                 </div>
-                <div className="mt-4 font-bold">{t('OpenAITTSModel')}</div>
+                <div className="mt-4 font-bold">{t("OpenAITTSModel")}</div>
                 <div className="mt-2">
                   <select
                     value={openaiTTSModel}
@@ -835,7 +835,7 @@ const Voice = () => {
                   </select>
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('OpenAITTSSpeed')}: {openaiTTSSpeed}
+                  {t("OpenAITTSSpeed")}: {openaiTTSSpeed}
                 </div>
                 <input
                   type="range"
@@ -847,16 +847,16 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       openaiTTSSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
-          } else if (selectVoice === 'azure') {
+            );
+          } else if (selectVoice === "azure") {
             return (
               <>
-                <div>{t('AzureTTSInfo')}</div>
-                <div className="mt-4 font-bold">{t('AzureAPIKeyLabel')}</div>
+                <div>{t("AzureTTSInfo")}</div>
+                <div className="mt-4 font-bold">{t("AzureAPIKeyLabel")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -870,7 +870,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('AzureEndpoint')}</div>
+                <div className="mt-4 font-bold">{t("AzureEndpoint")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -884,7 +884,7 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('OpenAITTSVoice')}</div>
+                <div className="mt-4 font-bold">{t("OpenAITTSVoice")}</div>
                 <div className="mt-2">
                   <select
                     value={openaiTTSVoice}
@@ -903,9 +903,9 @@ const Voice = () => {
                     <option value="shimmer">shimmer</option>
                   </select>
                 </div>
-                <div className="mt-4 font-bold">{t('OpenAITTSModel')}</div>
+                <div className="mt-4 font-bold">{t("OpenAITTSModel")}</div>
                 <div className="mt-4 font-bold">
-                  {t('OpenAITTSSpeed')}: {openaiTTSSpeed}
+                  {t("OpenAITTSSpeed")}: {openaiTTSSpeed}
                 </div>
                 <input
                   type="range"
@@ -917,20 +917,20 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       openaiTTSSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
-          } else if (selectVoice === 'nijivoice') {
+            );
+          } else if (selectVoice === "nijivoice") {
             return (
               <>
-                <div>{t('NijiVoiceInfo')}</div>
+                <div>{t("NijiVoiceInfo")}</div>
                 <Link
                   url="https://app.nijivoice.com/"
                   label="https://app.nijivoice.com/"
                 />
-                <div className="mt-4 font-bold">{t('NijiVoiceApiKey')}</div>
+                <div className="mt-4 font-bold">{t("NijiVoiceApiKey")}</div>
                 <div className="mt-2">
                   <input
                     className="text-ellipsis px-4 py-2 w-col-span-4 bg-white hover:bg-white-hover rounded-lg"
@@ -944,18 +944,18 @@ const Voice = () => {
                     }
                   />
                 </div>
-                <div className="mt-4 font-bold">{t('NijiVoiceActorId')}</div>
+                <div className="mt-4 font-bold">{t("NijiVoiceActorId")}</div>
                 <div className="mt-2">
                   <select
                     value={nijivoiceActorId}
                     onChange={(e) => {
                       settingsStore.setState({
                         nijivoiceActorId: e.target.value,
-                      })
+                      });
                     }}
                     className="px-4 py-2 bg-white hover:bg-white-hover rounded-lg"
                   >
-                    <option value="">{t('Select')}</option>
+                    <option value="">{t("Select")}</option>
                     {nijivoiceSpeakers.map((actor) => (
                       <option key={actor.id} value={actor.id}>
                         {actor.name}
@@ -964,7 +964,7 @@ const Voice = () => {
                   </select>
                 </div>
                 <div className="mt-4 font-bold">
-                  {t('NijiVoiceSpeed')}: {nijivoiceSpeed}
+                  {t("NijiVoiceSpeed")}: {nijivoiceSpeed}
                 </div>
                 <input
                   type="range"
@@ -976,11 +976,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
                 <div className="mt-4 font-bold">
-                  {t('NijiVoiceEmotionalLevel')}: {nijivoiceEmotionalLevel}
+                  {t("NijiVoiceEmotionalLevel")}: {nijivoiceEmotionalLevel}
                 </div>
                 <input
                   type="range"
@@ -992,11 +992,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceEmotionalLevel: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
                 <div className="mt-4 font-bold">
-                  {t('NijiVoiceSoundDuration')}: {nijivoiceSoundDuration}
+                  {t("NijiVoiceSoundDuration")}: {nijivoiceSoundDuration}
                 </div>
                 <input
                   type="range"
@@ -1008,23 +1008,23 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceSoundDuration: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
+            );
           }
         })()}
       </div>
 
       {/* カスタムテキスト入力と統合テストボタン */}
       <div className="mt-10 p-4 bg-gray-50 rounded-lg">
-        <div className="mb-4 text-xl font-bold">{t('TestVoiceSettings')}</div>
+        <div className="mb-4 text-xl font-bold">{t("TestVoiceSettings")}</div>
         <div className="flex items-center">
           <input
             className="flex-1 px-4 py-2 bg-white hover:bg-white-hover rounded-lg"
             type="text"
-            placeholder={t('CustomVoiceTextPlaceholder')}
+            placeholder={t("CustomVoiceTextPlaceholder")}
             value={customVoiceText}
             onChange={(e) => setCustomVoiceText(e.target.value)}
           />
@@ -1034,11 +1034,11 @@ const Voice = () => {
             onClick={() => testVoice(selectVoice, customVoiceText)}
             disabled={!customVoiceText}
           >
-            {t('TestSelectedVoice')}
+            {t("TestSelectedVoice")}
           </TextButton>
         </div>
       </div>
     </div>
-  )
-}
-export default Voice
+  );
+};
+export default Voice;

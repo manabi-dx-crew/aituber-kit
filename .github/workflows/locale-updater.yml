@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       target_branch:
-        description: 'Target branch to compare and update locale files'
+        description: "Target branch to compare and update locale files"
         required: true
-        default: 'develop' # デフォルトを設定するか、required: true のままにするか検討
+        default: "develop" # デフォルトを設定するか、required: true のままにするか検討
 
 jobs:
   update-locales:
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5 # Use v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |

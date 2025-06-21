@@ -1,4 +1,4 @@
-module.exports = {}
+module.exports = {};
 
 module.exports.createCanvas = jest.fn(() => ({
   getContext: jest.fn(() => ({
@@ -17,19 +17,19 @@ module.exports.createCanvas = jest.fn(() => ({
     scale: jest.fn(),
   })),
   toBuffer: jest.fn(() => Buffer.from([])),
-  toDataURL: jest.fn(() => ''),
+  toDataURL: jest.fn(() => ""),
   width: 100,
   height: 100,
-}))
+}));
 
 module.exports.Image = jest.fn(function () {
-  this.src = ''
-  this.onload = null
-  this.width = 0
-  this.height = 0
-})
+  this.src = "";
+  this.onload = null;
+  this.width = 0;
+  this.height = 0;
+});
 
 module.exports.loadImage = jest.fn(() =>
-  Promise.resolve(new module.exports.Image())
-)
-module.exports.registerFont = jest.fn()
+  Promise.resolve(new module.exports.Image()),
+);
+module.exports.registerFont = jest.fn();

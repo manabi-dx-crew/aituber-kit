@@ -1,4 +1,4 @@
-import { Talk } from './messages'
+import { Talk } from "./messages";
 
 export async function synthesizeVoiceAivisSpeechApi(
   talk: Talk,
@@ -6,13 +6,13 @@ export async function synthesizeVoiceAivisSpeechApi(
   speed: number,
   pitch: number,
   intonation: number,
-  serverUrl: string
+  serverUrl: string,
 ): Promise<ArrayBuffer> {
   try {
-    const res = await fetch('/api/tts-aivisspeech', {
-      method: 'POST',
+    const res = await fetch("/api/tts-aivisspeech", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         text: talk.message,
@@ -22,20 +22,20 @@ export async function synthesizeVoiceAivisSpeechApi(
         intonation,
         serverUrl,
       }),
-    })
+    });
 
     if (!res.ok) {
       throw new Error(
-        `AivisSpeechからの応答が異常です。ステータスコード: ${res.status}`
-      )
+        `AivisSpeechからの応答が異常です。ステータスコード: ${res.status}`,
+      );
     }
 
-    return await res.arrayBuffer()
+    return await res.arrayBuffer();
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`AivisSpeechでエラーが発生しました: ${error.message}`)
+      throw new Error(`AivisSpeechでエラーが発生しました: ${error.message}`);
     } else {
-      throw new Error('AivisSpeechで不明なエラーが発生しました')
+      throw new Error("AivisSpeechで不明なエラーが発生しました");
     }
   }
 }

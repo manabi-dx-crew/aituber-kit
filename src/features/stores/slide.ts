@@ -1,10 +1,10 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface SlideState {
-  isPlaying: boolean
-  currentSlide: number
-  selectedSlideDocs: string
+  isPlaying: boolean;
+  currentSlide: number;
+  selectedSlideDocs: string;
 }
 
 const slideStore = create<SlideState>()(
@@ -12,13 +12,13 @@ const slideStore = create<SlideState>()(
     (set, get) => ({
       isPlaying: false,
       currentSlide: 0,
-      selectedSlideDocs: '',
+      selectedSlideDocs: "",
     }),
     {
-      name: 'aitube-kit-slide',
+      name: "aitube-kit-slide",
       partialize: (state) => ({ selectedSlideDocs: state.selectedSlideDocs }),
-    }
-  )
-)
+    },
+  ),
+);
 
-export default slideStore
+export default slideStore;

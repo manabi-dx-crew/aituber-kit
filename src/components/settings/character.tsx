@@ -1,189 +1,191 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
-import homeStore from '@/features/stores/home'
-import menuStore from '@/features/stores/menu'
-import settingsStore, { SettingsState } from '@/features/stores/settings'
-import toastStore from '@/features/stores/toast'
-import { TextButton } from '../textButton'
+import homeStore from "@/features/stores/home";
+import menuStore from "@/features/stores/menu";
+import settingsStore, { SettingsState } from "@/features/stores/settings";
+import toastStore from "@/features/stores/toast";
+import { TextButton } from "../textButton";
 
 // Character型の定義
 type Character = Pick<
   SettingsState,
-  | 'characterName'
-  | 'showAssistantText'
-  | 'showCharacterName'
-  | 'systemPrompt'
-  | 'characterPreset1'
-  | 'characterPreset2'
-  | 'characterPreset3'
-  | 'characterPreset4'
-  | 'characterPreset5'
-  | 'customPresetName1'
-  | 'customPresetName2'
-  | 'customPresetName3'
-  | 'customPresetName4'
-  | 'customPresetName5'
-  | 'selectedPresetIndex'
-  | 'selectedVrmPath'
-  | 'selectedLive2DPath'
->
+  | "characterName"
+  | "showAssistantText"
+  | "showCharacterName"
+  | "systemPrompt"
+  | "characterPreset1"
+  | "characterPreset2"
+  | "characterPreset3"
+  | "characterPreset4"
+  | "characterPreset5"
+  | "customPresetName1"
+  | "customPresetName2"
+  | "customPresetName3"
+  | "customPresetName4"
+  | "customPresetName5"
+  | "selectedPresetIndex"
+  | "selectedVrmPath"
+  | "selectedLive2DPath"
+>;
 
 const emotionFields = [
   {
-    key: 'neutralEmotions',
-    label: 'Neutral Emotions',
-    defaultValue: ['Neutral'],
+    key: "neutralEmotions",
+    label: "Neutral Emotions",
+    defaultValue: ["Neutral"],
   },
   {
-    key: 'happyEmotions',
-    label: 'Happy Emotions',
-    defaultValue: ['Happy,Happy2'],
+    key: "happyEmotions",
+    label: "Happy Emotions",
+    defaultValue: ["Happy,Happy2"],
   },
   {
-    key: 'sadEmotions',
-    label: 'Sad Emotions',
-    defaultValue: ['Sad,Sad2,Troubled'],
+    key: "sadEmotions",
+    label: "Sad Emotions",
+    defaultValue: ["Sad,Sad2,Troubled"],
   },
   {
-    key: 'angryEmotions',
-    label: 'Angry Emotions',
-    defaultValue: ['Angry,Focus'],
+    key: "angryEmotions",
+    label: "Angry Emotions",
+    defaultValue: ["Angry,Focus"],
   },
   {
-    key: 'relaxedEmotions',
-    label: 'Relaxed Emotions',
-    defaultValue: ['Relaxed'],
+    key: "relaxedEmotions",
+    label: "Relaxed Emotions",
+    defaultValue: ["Relaxed"],
   },
   {
-    key: 'surprisedEmotions',
-    label: 'Surprised Emotions',
-    defaultValue: ['Surprised'],
+    key: "surprisedEmotions",
+    label: "Surprised Emotions",
+    defaultValue: ["Surprised"],
   },
-] as const
+] as const;
 
 const motionFields = [
-  { key: 'idleMotionGroup', label: 'Idle Motion Group', defaultValue: 'Idle' },
+  { key: "idleMotionGroup", label: "Idle Motion Group", defaultValue: "Idle" },
   {
-    key: 'neutralMotionGroup',
-    label: 'Neutral Motion Group',
-    defaultValue: 'Neutral',
+    key: "neutralMotionGroup",
+    label: "Neutral Motion Group",
+    defaultValue: "Neutral",
   },
   {
-    key: 'happyMotionGroup',
-    label: 'Happy Motion Group',
-    defaultValue: 'Happy',
+    key: "happyMotionGroup",
+    label: "Happy Motion Group",
+    defaultValue: "Happy",
   },
-  { key: 'sadMotionGroup', label: 'Sad Motion Group', defaultValue: 'Sad' },
+  { key: "sadMotionGroup", label: "Sad Motion Group", defaultValue: "Sad" },
   {
-    key: 'angryMotionGroup',
-    label: 'Angry Motion Group',
-    defaultValue: 'Angry',
-  },
-  {
-    key: 'relaxedMotionGroup',
-    label: 'Relaxed Motion Group',
-    defaultValue: 'Relaxed',
+    key: "angryMotionGroup",
+    label: "Angry Motion Group",
+    defaultValue: "Angry",
   },
   {
-    key: 'surprisedMotionGroup',
-    label: 'Surprised Motion Group',
-    defaultValue: 'Surprised',
+    key: "relaxedMotionGroup",
+    label: "Relaxed Motion Group",
+    defaultValue: "Relaxed",
   },
-] as const
+  {
+    key: "surprisedMotionGroup",
+    label: "Surprised Motion Group",
+    defaultValue: "Surprised",
+  },
+] as const;
 
 interface Live2DModel {
-  path: string
-  name: string
-  expressions: string[]
-  motions: string[]
+  path: string;
+  name: string;
+  expressions: string[];
+  motions: string[];
 }
 
-type EmotionFieldKey = (typeof emotionFields)[number]['key']
+type EmotionFieldKey = (typeof emotionFields)[number]["key"];
 
 const Live2DSettingsForm = () => {
-  const store = settingsStore()
-  const { t } = useTranslation()
-  const [currentModel, setCurrentModel] = useState<Live2DModel | null>(null)
-  const [openDropdown, setOpenDropdown] = useState<EmotionFieldKey | null>(null)
+  const store = settingsStore();
+  const { t } = useTranslation();
+  const [currentModel, setCurrentModel] = useState<Live2DModel | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<EmotionFieldKey | null>(
+    null,
+  );
 
   useEffect(() => {
     // 現在選択されているLive2Dモデルの情報を取得
     const fetchCurrentModel = async () => {
       try {
-        const response = await fetch('/api/get-live2d-list')
-        const models: Live2DModel[] = await response.json()
+        const response = await fetch("/api/get-live2d-list");
+        const models: Live2DModel[] = await response.json();
         const selected = models.find(
-          (model) => model.path === store.selectedLive2DPath
-        )
-        setCurrentModel(selected || null)
+          (model) => model.path === store.selectedLive2DPath,
+        );
+        setCurrentModel(selected || null);
       } catch (error) {
-        console.error('Error fetching Live2D model info:', error)
+        console.error("Error fetching Live2D model info:", error);
       }
-    }
+    };
 
     if (store.selectedLive2DPath) {
-      fetchCurrentModel()
+      fetchCurrentModel();
     }
-  }, [store.selectedLive2DPath])
+  }, [store.selectedLive2DPath]);
 
   // コンポーネントマウント時にデフォルト値を設定
   useEffect(() => {
-    const updates: Record<string, any> = {}
+    const updates: Record<string, any> = {};
 
     emotionFields.forEach((field) => {
       if (!store[field.key] || store[field.key].length === 0) {
-        updates[field.key] = field.defaultValue
+        updates[field.key] = field.defaultValue;
       }
-    })
+    });
 
     motionFields.forEach((field) => {
-      if (!store[field.key] || store[field.key] === '') {
-        updates[field.key] = field.defaultValue
+      if (!store[field.key] || store[field.key] === "") {
+        updates[field.key] = field.defaultValue;
       }
-    })
+    });
 
     if (Object.keys(updates).length > 0) {
-      settingsStore.setState(updates)
+      settingsStore.setState(updates);
     }
-  }, [])
+  }, [store]);
 
   const handleEmotionChange = (
     key: EmotionFieldKey,
     expression: string,
-    checked: boolean
+    checked: boolean,
   ) => {
-    const currentValues = store[key]
+    const currentValues = store[key];
     const newValues = checked
       ? [...currentValues, expression]
-      : currentValues.filter((value) => value !== expression)
+      : currentValues.filter((value) => value !== expression);
 
     settingsStore.setState({
       [key]: newValues,
-    })
-  }
+    });
+  };
 
   const handleMotionChange = (key: string, value: string) => {
     settingsStore.setState({
       [key]: value,
-    })
-  }
+    });
+  };
 
   if (!currentModel) {
     return (
       <div className="flex items-center justify-center h-32 text-gray-500">
-        {t('Live2D.LoadingModel')}
+        {t("Live2D.LoadingModel")}
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-8">
       <div className="mb-6">
-        <div className="mb-4 text-xl font-bold">{t('Live2D.Emotions')}</div>
+        <div className="mb-4 text-xl font-bold">{t("Live2D.Emotions")}</div>
         <div className="mb-6 text-base whitespace-pre-line">
-          {t('Live2D.EmotionInfo')}
+          {t("Live2D.EmotionInfo")}
         </div>
         <div className="space-y-4 text-sm">
           {emotionFields.map((field) => (
@@ -197,7 +199,7 @@ const Live2DSettingsForm = () => {
                   className="w-full px-2 py-2 bg-white hover:bg-white-hover rounded-lg text-left flex items-center justify-between"
                   onClick={() =>
                     setOpenDropdown(
-                      openDropdown === field.key ? null : field.key
+                      openDropdown === field.key ? null : field.key,
                     )
                   }
                 >
@@ -213,8 +215,8 @@ const Live2DSettingsForm = () => {
                             type="button"
                             className="ml-4 text-gray-500 hover:text-gray-700"
                             onClick={(e) => {
-                              e.stopPropagation()
-                              handleEmotionChange(field.key, expression, false)
+                              e.stopPropagation();
+                              handleEmotionChange(field.key, expression, false);
                             }}
                           >
                             <svg
@@ -234,12 +236,12 @@ const Live2DSettingsForm = () => {
                         </span>
                       ))
                     ) : (
-                      <span className="">{t('Live2D.SelectEmotions')}</span>
+                      <span className="">{t("Live2D.SelectEmotions")}</span>
                     )}
                   </div>
                   <svg
                     className={`h-4 w-4  transition-transform ${
-                      openDropdown === field.key ? 'rotate-180' : ''
+                      openDropdown === field.key ? "rotate-180" : ""
                     }`}
                     viewBox="0 0 16 16"
                     fill="none"
@@ -268,7 +270,7 @@ const Live2DSettingsForm = () => {
                             handleEmotionChange(
                               field.key,
                               expression,
-                              e.target.checked
+                              e.target.checked,
                             )
                           }
                         />
@@ -284,9 +286,9 @@ const Live2DSettingsForm = () => {
       </div>
 
       <div className="">
-        <div className="mb-4 text-xl font-bold">{t('Live2D.MotionGroups')}</div>
+        <div className="mb-4 text-xl font-bold">{t("Live2D.MotionGroups")}</div>
         <div className="mb-6 text-base text-gray-500 whitespace-pre-line">
-          {t('Live2D.MotionGroupsInfo')}
+          {t("Live2D.MotionGroupsInfo")}
         </div>
         <div className="space-y-4">
           {motionFields.map((field) => (
@@ -303,7 +305,7 @@ const Live2DSettingsForm = () => {
                   }
                 >
                   <option value="" className="">
-                    {t('Live2D.SelectMotionGroup')}
+                    {t("Live2D.SelectMotionGroup")}
                   </option>
                   {currentModel.motions.map((motion) => (
                     <option
@@ -336,167 +338,167 @@ const Live2DSettingsForm = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Character = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const {
     characterName,
     selectedVrmPath,
     selectedLive2DPath,
     modelType,
     fixedCharacterPosition,
-  } = settingsStore()
-  const [vrmFiles, setVrmFiles] = useState<string[]>([])
+  } = settingsStore();
+  const [vrmFiles, setVrmFiles] = useState<string[]>([]);
   const [live2dModels, setLive2dModels] = useState<
     Array<{ path: string; name: string }>
-  >([])
-  const selectAIService = settingsStore((s) => s.selectAIService)
-  const systemPrompt = settingsStore((s) => s.systemPrompt)
+  >([]);
+  const selectAIService = settingsStore((s) => s.selectAIService);
+  const systemPrompt = settingsStore((s) => s.systemPrompt);
   const characterPresets = [
     {
-      key: 'characterPreset1',
+      key: "characterPreset1",
       value: settingsStore((s) => s.characterPreset1),
     },
     {
-      key: 'characterPreset2',
+      key: "characterPreset2",
       value: settingsStore((s) => s.characterPreset2),
     },
     {
-      key: 'characterPreset3',
+      key: "characterPreset3",
       value: settingsStore((s) => s.characterPreset3),
     },
     {
-      key: 'characterPreset4',
+      key: "characterPreset4",
       value: settingsStore((s) => s.characterPreset4),
     },
     {
-      key: 'characterPreset5',
+      key: "characterPreset5",
       value: settingsStore((s) => s.characterPreset5),
     },
-  ]
-  const [tooltipText, setTooltipText] = useState('')
+  ];
+  const [tooltipText, setTooltipText] = useState("");
 
   const [tooltip, setTooltip] = useState<{
-    x: number
-    y: number
-    visible: boolean
+    x: number;
+    y: number;
+    visible: boolean;
   }>({
     x: 0,
     y: 0,
     visible: false,
-  })
+  });
 
   // ツールチップの縦のサイズの上限を20vhに設定
-  const tooltipMaxHeight = '20vh'
+  const tooltipMaxHeight = "20vh";
 
   // ツールチップの表示位置を調整するための定数
-  const tooltipOffsetX = 15
-  const tooltipOffsetY = 10
+  const tooltipOffsetX = 15;
+  const tooltipOffsetY = 10;
 
   const handleMouseMove = (e: React.MouseEvent) => {
     setTooltip({
       x: e.clientX + tooltipOffsetX,
       y: e.clientY + tooltipOffsetY,
       visible: true,
-    })
-  }
+    });
+  };
 
   const handleMouseLeave = () => {
-    setTooltip((prev) => ({ ...prev, visible: false }))
-  }
+    setTooltip((prev) => ({ ...prev, visible: false }));
+  };
 
   useEffect(() => {
-    fetch('/api/get-vrm-list')
+    fetch("/api/get-vrm-list")
       .then((res) => res.json())
       .then((files) => setVrmFiles(files))
       .catch((error) => {
-        console.error('Error fetching VRM list:', error)
-      })
+        console.error("Error fetching VRM list:", error);
+      });
 
-    fetch('/api/get-live2d-list')
+    fetch("/api/get-live2d-list")
       .then((res) => res.json())
       .then((models) => setLive2dModels(models))
       .catch((error) => {
-        console.error('Error fetching Live2D list:', error)
-      })
-  }, [])
-  const handlePositionAction = (action: 'fix' | 'unfix' | 'reset') => {
+        console.error("Error fetching Live2D list:", error);
+      });
+  }, []);
+  const handlePositionAction = (action: "fix" | "unfix" | "reset") => {
     try {
-      const { viewer, live2dViewer } = homeStore.getState()
+      const { viewer, live2dViewer } = homeStore.getState();
 
-      if (modelType === 'vrm') {
+      if (modelType === "vrm") {
         const methodMap = {
-          fix: 'fixCameraPosition',
-          unfix: 'unfixCameraPosition',
-          reset: 'resetCameraPosition',
-        }
-        const method = methodMap[action]
-        if (viewer && typeof (viewer as any)[method] === 'function') {
-          ;(viewer as any)[method]()
+          fix: "fixCameraPosition",
+          unfix: "unfixCameraPosition",
+          reset: "resetCameraPosition",
+        };
+        const method = methodMap[action];
+        if (viewer && typeof (viewer as any)[method] === "function") {
+          (viewer as any)[method]();
         } else {
-          throw new Error(`VRM viewer method ${method} not available`)
+          throw new Error(`VRM viewer method ${method} not available`);
         }
       } else if (live2dViewer) {
         const methodMap = {
-          fix: 'fixPosition',
-          unfix: 'unfixPosition',
-          reset: 'resetPosition',
-        }
-        const method = methodMap[action]
-        if (typeof (live2dViewer as any)[method] === 'function') {
-          ;(live2dViewer as any)[method]()
+          fix: "fixPosition",
+          unfix: "unfixPosition",
+          reset: "resetPosition",
+        };
+        const method = methodMap[action];
+        if (typeof (live2dViewer as any)[method] === "function") {
+          (live2dViewer as any)[method]();
         } else {
-          throw new Error(`Live2D viewer method ${method} not available`)
+          throw new Error(`Live2D viewer method ${method} not available`);
         }
       }
 
       const messageMap = {
-        fix: t('Toasts.PositionFixed'),
-        unfix: t('Toasts.PositionUnfixed'),
-        reset: t('Toasts.PositionReset'),
-      }
+        fix: t("Toasts.PositionFixed"),
+        unfix: t("Toasts.PositionUnfixed"),
+        reset: t("Toasts.PositionReset"),
+      };
 
       toastStore.getState().addToast({
         message: messageMap[action],
-        type: action === 'fix' ? 'success' : 'info',
+        type: action === "fix" ? "success" : "info",
         tag: `position-${action}`,
-      })
+      });
     } catch (error) {
-      console.error(`Position ${action} failed:`, error)
+      console.error(`Position ${action} failed:`, error);
       toastStore.getState().addToast({
-        message: t('Toasts.PositionActionFailed'),
-        type: 'error',
-        tag: 'position-error',
-      })
+        message: t("Toasts.PositionActionFailed"),
+        type: "error",
+        tag: "position-error",
+      });
     }
-  }
+  };
 
   const handleVrmUpload = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
+    const formData = new FormData();
+    formData.append("file", file);
 
-    const response = await fetch('/api/upload-vrm-list', {
-      method: 'POST',
+    const response = await fetch("/api/upload-vrm-list", {
+      method: "POST",
       body: formData,
-    })
+    });
 
     if (response.ok) {
-      const { path } = await response.json()
-      settingsStore.setState({ selectedVrmPath: path })
-      const { viewer } = homeStore.getState()
-      viewer.loadVrm(path)
+      const { path } = await response.json();
+      settingsStore.setState({ selectedVrmPath: path });
+      const { viewer } = homeStore.getState();
+      viewer.loadVrm(path);
 
       // リストを更新
-      fetch('/api/get-vrm-list')
+      fetch("/api/get-vrm-list")
         .then((res) => res.json())
         .then((files) => setVrmFiles(files))
         .catch((error) => {
-          console.error('Error fetching VRM list:', error)
-        })
+          console.error("Error fetching VRM list:", error);
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -508,14 +510,14 @@ const Character = () => {
           height={24}
           className="mr-2"
         />
-        <h2 className="text-2xl font-bold">{t('CharacterSettings')}</h2>
+        <h2 className="text-2xl font-bold">{t("CharacterSettings")}</h2>
       </div>
       <div className="">
-        <div className="mb-4 text-xl font-bold">{t('CharacterName')}</div>
+        <div className="mb-4 text-xl font-bold">{t("CharacterName")}</div>
         <input
           className="text-ellipsis px-4 py-2 w-col-span-2 bg-white hover:bg-white-hover rounded-lg"
           type="text"
-          placeholder={t('CharacterName')}
+          placeholder={t("CharacterName")}
           value={characterName}
           onChange={(e) =>
             settingsStore.setState({ characterName: e.target.value })
@@ -523,48 +525,48 @@ const Character = () => {
         />
 
         <div className="mt-6 mb-4 text-xl font-bold">
-          {t('CharacterModelLabel')}
+          {t("CharacterModelLabel")}
         </div>
-        <div className="mb-4 text-base">{t('CharacterModelInfo')}</div>
+        <div className="mb-4 text-base">{t("CharacterModelInfo")}</div>
 
         <div className="flex mb-2">
           <button
             className={`px-4 py-2 rounded-lg mr-2 ${
-              modelType === 'vrm'
-                ? 'bg-primary text-white'
-                : 'bg-white hover:bg-white-hover'
+              modelType === "vrm"
+                ? "bg-primary text-white"
+                : "bg-white hover:bg-white-hover"
             }`}
-            onClick={() => settingsStore.setState({ modelType: 'vrm' })}
+            onClick={() => settingsStore.setState({ modelType: "vrm" })}
           >
             VRM
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              modelType === 'live2d'
-                ? 'bg-primary text-white'
-                : 'bg-white hover:bg-white-hover'
+              modelType === "live2d"
+                ? "bg-primary text-white"
+                : "bg-white hover:bg-white-hover"
             }`}
-            onClick={() => settingsStore.setState({ modelType: 'live2d' })}
+            onClick={() => settingsStore.setState({ modelType: "live2d" })}
           >
             Live2D
           </button>
         </div>
 
-        {modelType === 'vrm' ? (
+        {modelType === "vrm" ? (
           <>
             <select
               className="text-ellipsis px-4 py-2 w-col-span-2 bg-white hover:bg-white-hover rounded-lg"
               value={selectedVrmPath}
               onChange={(e) => {
-                const path = e.target.value
-                settingsStore.setState({ selectedVrmPath: path })
-                const { viewer } = homeStore.getState()
-                viewer.loadVrm(path)
+                const path = e.target.value;
+                settingsStore.setState({ selectedVrmPath: path });
+                const { viewer } = homeStore.getState();
+                viewer.loadVrm(path);
               }}
             >
               {vrmFiles.map((file) => (
                 <option key={file} value={`/vrm/${file}`}>
-                  {file.replace('.vrm', '')}
+                  {file.replace(".vrm", "")}
                 </option>
               ))}
             </select>
@@ -572,34 +574,34 @@ const Character = () => {
             <div className="my-4">
               <TextButton
                 onClick={() => {
-                  const { fileInput } = menuStore.getState()
+                  const { fileInput } = menuStore.getState();
                   if (fileInput) {
-                    fileInput.accept = '.vrm'
+                    fileInput.accept = ".vrm";
                     fileInput.onchange = (e) => {
-                      const file = (e.target as HTMLInputElement).files?.[0]
+                      const file = (e.target as HTMLInputElement).files?.[0];
                       if (file) {
-                        handleVrmUpload(file)
+                        handleVrmUpload(file);
                       }
-                    }
-                    fileInput.click()
+                    };
+                    fileInput.click();
                   }
                 }}
               >
-                {t('OpenVRM')}
+                {t("OpenVRM")}
               </TextButton>
             </div>
           </>
         ) : (
           <>
             <div className="my-4 whitespace-pre-line">
-              {t('Live2D.FileInfo')}
+              {t("Live2D.FileInfo")}
             </div>
             <select
               className="text-ellipsis px-4 py-2 w-col-span-2 bg-white hover:bg-white-hover rounded-lg mb-2"
               value={selectedLive2DPath}
               onChange={(e) => {
-                const path = e.target.value
-                settingsStore.setState({ selectedLive2DPath: path })
+                const path = e.target.value;
+                settingsStore.setState({ selectedLive2DPath: path });
               }}
             >
               {live2dModels.map((model) => (
@@ -616,54 +618,54 @@ const Character = () => {
 
         {/* Character Position Controls */}
         <div className="my-6">
-          <div className="text-xl font-bold mb-4">{t('CharacterPosition')}</div>
-          <div className="mb-4 text-base">{t('CharacterPositionInfo')}</div>
+          <div className="text-xl font-bold mb-4">{t("CharacterPosition")}</div>
+          <div className="mb-4 text-base">{t("CharacterPositionInfo")}</div>
           <div className="mb-2 text-sm font-medium">
-            {t('CurrentStatus')}:{' '}
+            {t("CurrentStatus")}:{" "}
             <span className="font-bold">
               {fixedCharacterPosition
-                ? t('PositionFixed')
-                : t('PositionNotFixed')}
+                ? t("PositionFixed")
+                : t("PositionNotFixed")}
             </span>
           </div>
           <div className="flex gap-4">
-            <TextButton onClick={() => handlePositionAction('fix')}>
-              {t('FixPosition')}
+            <TextButton onClick={() => handlePositionAction("fix")}>
+              {t("FixPosition")}
             </TextButton>
-            <TextButton onClick={() => handlePositionAction('unfix')}>
-              {t('UnfixPosition')}
+            <TextButton onClick={() => handlePositionAction("unfix")}>
+              {t("UnfixPosition")}
             </TextButton>
-            <TextButton onClick={() => handlePositionAction('reset')}>
-              {t('ResetPosition')}
+            <TextButton onClick={() => handlePositionAction("reset")}>
+              {t("ResetPosition")}
             </TextButton>
           </div>
         </div>
 
         <div className="my-6 mb-2">
           <div className="my-4 text-xl font-bold">
-            {t('CharacterSettingsPrompt')}
+            {t("CharacterSettingsPrompt")}
           </div>
-          {selectAIService === 'dify' ? (
-            <div className="my-4">{t('DifyInstruction')}</div>
+          {selectAIService === "dify" ? (
+            <div className="my-4">{t("DifyInstruction")}</div>
           ) : (
             <div className="my-4 whitespace-pre-line">
-              {t('CharacterSettingsInfo')}
+              {t("CharacterSettingsInfo")}
             </div>
           )}
         </div>
         <div className="my-4 whitespace-pre-line">
-          {t('CharacterpresetInfo')}
+          {t("CharacterpresetInfo")}
         </div>
         <div className="my-6 mb-2">
           <div className="flex flex-wrap gap-2 mb-4" role="tablist">
             {characterPresets.map(({ key, value }, index) => {
               const customNameKey =
-                `customPresetName${index + 1}` as keyof Character
+                `customPresetName${index + 1}` as keyof Character;
               const customName = settingsStore(
-                (s) => s[customNameKey] as string
-              )
-              const selectedIndex = settingsStore((s) => s.selectedPresetIndex)
-              const isSelected = selectedIndex === index
+                (s) => s[customNameKey] as string,
+              );
+              const selectedIndex = settingsStore((s) => s.selectedPresetIndex);
+              const isSelected = selectedIndex === index;
 
               return (
                 <button
@@ -673,56 +675,56 @@ const Character = () => {
                     settingsStore.setState({
                       selectedPresetIndex: index,
                       systemPrompt: value,
-                    })
+                    });
 
                     toastStore.getState().addToast({
-                      message: t('Toasts.PresetSwitching', {
+                      message: t("Toasts.PresetSwitching", {
                         presetName: customName,
                       }),
-                      type: 'info',
+                      type: "info",
                       tag: `character-preset-switching`,
-                    })
+                    });
                   }}
                   role="tab"
                   aria-selected={isSelected}
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
                       settingsStore.setState({
                         selectedPresetIndex: index,
                         systemPrompt: value,
-                      })
+                      });
 
                       toastStore.getState().addToast({
-                        message: t('Toasts.PresetSwitching', {
+                        message: t("Toasts.PresetSwitching", {
                           presetName: customName,
                         }),
-                        type: 'info',
+                        type: "info",
                         tag: `character-preset-switching`,
-                      })
+                      });
                     }
                   }}
                   className={`px-4 py-2 rounded-md text-sm ${
                     isSelected
-                      ? 'bg-primary text-white'
-                      : 'bg-surface1 hover:bg-surface1-hover text-gray-800 bg-white'
+                      ? "bg-primary text-white"
+                      : "bg-surface1 hover:bg-surface1-hover text-gray-800 bg-white"
                   }`}
                 >
                   {customName}
                 </button>
-              )
+              );
             })}
           </div>
 
           {characterPresets.map(({ key, value }, index) => {
             const customNameKey =
-              `customPresetName${index + 1}` as keyof Character
-            const customName = settingsStore((s) => s[customNameKey] as string)
-            const selectedIndex = settingsStore((s) => s.selectedPresetIndex)
-            const isSelected = selectedIndex === index
+              `customPresetName${index + 1}` as keyof Character;
+            const customName = settingsStore((s) => s[customNameKey] as string);
+            const selectedIndex = settingsStore((s) => s.selectedPresetIndex);
+            const isSelected = selectedIndex === index;
 
-            if (!isSelected) return null
+            if (!isSelected) return null;
 
             return (
               <div key={key} className="space-y-4">
@@ -733,10 +735,10 @@ const Character = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         [customNameKey]: e.target.value,
-                      })
+                      });
                     }}
-                    aria-label={t('PresetNameLabel', {
-                      defaultValue: 'Preset Name',
+                    aria-label={t("PresetNameLabel", {
+                      defaultValue: "Preset Name",
                     })}
                     className="px-3 py-2 bg-white border border-gray-300 rounded-md text-sm w-full"
                     placeholder={t(`Characterpreset${index + 1}`)}
@@ -745,24 +747,24 @@ const Character = () => {
                 <textarea
                   value={systemPrompt}
                   onChange={(e) => {
-                    const newValue = e.target.value
+                    const newValue = e.target.value;
                     // システムプロンプトとプリセットの内容を同時に更新
                     settingsStore.setState({
                       systemPrompt: newValue,
                       [key]: newValue,
-                    })
+                    });
                   }}
-                  aria-label={t('SystemPromptLabel', {
-                    defaultValue: 'System Prompt',
+                  aria-label={t("SystemPromptLabel", {
+                    defaultValue: "System Prompt",
                   })}
                   className="px-3 py-2 bg-white border border-gray-300 rounded-md w-full h-64 text-sm"
                 />
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </>
-  )
-}
-export default Character
+  );
+};
+export default Character;

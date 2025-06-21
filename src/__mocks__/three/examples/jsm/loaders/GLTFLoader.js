@@ -9,8 +9,8 @@ export class GLTFLoader {
         asset: {},
         parser: {},
         userData: {},
-      })
-    }, 0)
+      });
+    }, 0);
   }
 
   loadAsync(url) {
@@ -22,38 +22,38 @@ export class GLTFLoader {
       asset: {},
       parser: {},
       userData: {},
-    })
+    });
   }
 
   setDRACOLoader(dracoLoader) {
-    return this
+    return this;
   }
 
   setKTX2Loader(ktx2Loader) {
-    return this
+    return this;
   }
 
   setMeshoptDecoder(decoder) {
-    return this
+    return this;
   }
 
   register(plugin) {
-    return this
+    return this;
   }
 
   unregister(plugin) {
-    return this
+    return this;
   }
 
   setPath(path) {
-    return this
+    return this;
   }
 
   setResourcePath(path) {
-    return this
+    return this;
   }
 
   setCrossOrigin(crossOrigin) {
-    return this
+    return this;
   }
 }

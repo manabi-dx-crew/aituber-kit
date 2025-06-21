@@ -1,5 +1,5 @@
 jest.mock(
-  'canvas',
+  "canvas",
   () => {
     return {
       createCanvas: jest.fn(() => ({
@@ -19,7 +19,7 @@ jest.mock(
           scale: jest.fn(),
         })),
         toBuffer: jest.fn(() => Buffer.from([])),
-        toDataURL: jest.fn(() => ''),
+        toDataURL: jest.fn(() => ""),
         width: 100,
         height: 100,
       })),
@@ -27,13 +27,13 @@ jest.mock(
         Promise.resolve({
           width: 100,
           height: 100,
-        })
+        }),
       ),
       Image: jest.fn(function () {
-        this.src = ''
-        this.onload = null
-        this.width = 0
-        this.height = 0
+        this.src = "";
+        this.onload = null;
+        this.width = 0;
+        this.height = 0;
       }),
       registerFont: jest.fn(),
       parseFont: jest.fn(),
@@ -42,13 +42,13 @@ jest.mock(
       PNGStream: jest.fn(),
       JPEGStream: jest.fn(),
       PDFStream: jest.fn(),
-    }
+    };
   },
-  { virtual: true }
-)
+  { virtual: true },
+);
 
 jest.mock(
-  'node-canvas',
+  "node-canvas",
   () => {
     return {
       createCanvas: jest.fn(() => ({
@@ -68,7 +68,7 @@ jest.mock(
           scale: jest.fn(),
         })),
         toBuffer: jest.fn(() => Buffer.from([])),
-        toDataURL: jest.fn(() => ''),
+        toDataURL: jest.fn(() => ""),
         width: 100,
         height: 100,
       })),
@@ -76,13 +76,13 @@ jest.mock(
         Promise.resolve({
           width: 100,
           height: 100,
-        })
+        }),
       ),
       Image: jest.fn(function () {
-        this.src = ''
-        this.onload = null
-        this.width = 0
-        this.height = 0
+        this.src = "";
+        this.onload = null;
+        this.width = 0;
+        this.height = 0;
       }),
       registerFont: jest.fn(),
       parseFont: jest.fn(),
@@ -91,7 +91,7 @@ jest.mock(
       PNGStream: jest.fn(),
       JPEGStream: jest.fn(),
       PDFStream: jest.fn(),
-    }
+    };
   },
-  { virtual: true }
-)
+  { virtual: true },
+);

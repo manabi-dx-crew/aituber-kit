@@ -1,35 +1,35 @@
-import { useTranslation } from 'react-i18next'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
+import { useTranslation } from "react-i18next";
+import settingsStore from "@/features/stores/settings";
+import { TextButton } from "../textButton";
 
 const AdvancedSettings = () => {
   const includeTimestampInUserMessage = settingsStore(
-    (s) => s.includeTimestampInUserMessage
-  )
-  const useVideoAsBackground = settingsStore((s) => s.useVideoAsBackground)
+    (s) => s.includeTimestampInUserMessage,
+  );
+  const useVideoAsBackground = settingsStore((s) => s.useVideoAsBackground);
   const showCharacterPresetMenu = settingsStore(
-    (s) => s.showCharacterPresetMenu
-  )
+    (s) => s.showCharacterPresetMenu,
+  );
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="mb-10">
       <div className="mb-6 grid-cols-2">
-        <div className="mb-4 text-xl font-bold">{t('LocalStorageReset')}</div>
-        <div className="my-4 text-base">{t('LocalStorageResetInfo')}</div>
+        <div className="mb-4 text-xl font-bold">{t("LocalStorageReset")}</div>
+        <div className="my-4 text-base">{t("LocalStorageResetInfo")}</div>
         <TextButton
           onClick={() => {
-            settingsStore.persist.clearStorage()
-            window.location.reload()
+            settingsStore.persist.clearStorage();
+            window.location.reload();
           }}
         >
-          {t('LocalStorageResetButton')}
+          {t("LocalStorageResetButton")}
         </TextButton>
       </div>
       <div className="my-6">
         <div className="my-4 text-xl font-bold">
-          {t('UseVideoAsBackground')}
+          {t("UseVideoAsBackground")}
         </div>
         <div className="my-2">
           <TextButton
@@ -39,13 +39,13 @@ const AdvancedSettings = () => {
               }))
             }
           >
-            {useVideoAsBackground ? t('StatusOn') : t('StatusOff')}
+            {useVideoAsBackground ? t("StatusOn") : t("StatusOff")}
           </TextButton>
         </div>
       </div>
       <div className="my-6">
         <div className="my-4 text-xl font-bold">
-          {t('ShowCharacterPresetMenu')}
+          {t("ShowCharacterPresetMenu")}
         </div>
         <div className="my-2">
           <TextButton
@@ -55,16 +55,16 @@ const AdvancedSettings = () => {
               }))
             }
           >
-            {showCharacterPresetMenu ? t('StatusOn') : t('StatusOff')}
+            {showCharacterPresetMenu ? t("StatusOn") : t("StatusOff")}
           </TextButton>
         </div>
       </div>
       <div className="my-6">
         <div className="my-4 text-xl font-bold">
-          {t('IncludeTimestampInUserMessage')}
+          {t("IncludeTimestampInUserMessage")}
         </div>
         <div className="my-4 text-base whitespace-pre-line">
-          {t('IncludeTimestampInUserMessageInfo')}
+          {t("IncludeTimestampInUserMessageInfo")}
         </div>
         <div className="my-2">
           <TextButton
@@ -74,11 +74,11 @@ const AdvancedSettings = () => {
               })
             }
           >
-            {includeTimestampInUserMessage ? t('StatusOn') : t('StatusOff')}
+            {includeTimestampInUserMessage ? t("StatusOn") : t("StatusOff")}
           </TextButton>
         </div>
       </div>
     </div>
-  )
-}
-export default AdvancedSettings
+  );
+};
+export default AdvancedSettings;

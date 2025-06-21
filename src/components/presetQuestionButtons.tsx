@@ -1,56 +1,58 @@
-import { useCallback, useRef, useEffect, useState } from 'react'
-import settingsStore from '@/features/stores/settings'
-import homeStore from '@/features/stores/home'
-import { SpeakQueue } from '@/features/messages/speakQueue'
+import { useCallback, useRef, useEffect, useState } from "react";
+import settingsStore from "@/features/stores/settings";
+import homeStore from "@/features/stores/home";
+import { SpeakQueue } from "@/features/messages/speakQueue";
 
 type Props = {
-  onSelectQuestion: (text: string) => void
-}
+  onSelectQuestion: (text: string) => void;
+};
 
 export const PresetQuestionButtons = ({ onSelectQuestion }: Props) => {
-  const presetQuestions = settingsStore((s) => s.presetQuestions)
-  const showPresetQuestions = settingsStore((s) => s.showPresetQuestions)
-  const [shouldCenter, setShouldCenter] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
+  const presetQuestions = settingsStore((s) => s.presetQuestions);
+  const showPresetQuestions = settingsStore((s) => s.showPresetQuestions);
+  const [shouldCenter, setShouldCenter] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleQuestionClick = useCallback(
     (text: string) => {
-      homeStore.setState({ isSpeaking: false })
-      SpeakQueue.stopAll()
-      onSelectQuestion(text)
+      homeStore.setState({ isSpeaking: false });
+      SpeakQueue.stopAll();
+      onSelectQuestion(text);
     },
-    [onSelectQuestion]
-  )
+    [onSelectQuestion],
+  );
 
   useEffect(() => {
     const checkOverflow = () => {
       if (containerRef.current && contentRef.current) {
-        const containerWidth = containerRef.current.clientWidth
-        const contentWidth = contentRef.current.scrollWidth
-        setShouldCenter(contentWidth <= containerWidth)
+        const containerWidth = containerRef.current.clientWidth;
+        const contentWidth = contentRef.current.scrollWidth;
+        setShouldCenter(contentWidth <= containerWidth);
       }
-    }
+    };
 
-    checkOverflow()
+    checkOverflow();
 
     // リサイズ時にも再計算
     const handleResize = () => {
-      checkOverflow()
-    }
+      checkOverflow();
+    };
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [presetQuestions])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [presetQuestions]);
 
   if (!showPresetQuestions || presetQuestions.length === 0) {
-    return null
+    return null;
   }
 
   // Sort questions by order
-  const sortedQuestions = [...presetQuestions].sort((a, b) => a.order - b.order)
+  const sortedQuestions = [...presetQuestions].sort(
+    (a, b) => a.order - b.order,
+  );
 
   return (
     <div className="absolute bottom-[80px] z-20 w-full px-16">
@@ -58,7 +60,7 @@ export const PresetQuestionButtons = ({ onSelectQuestion }: Props) => {
         <div
           ref={contentRef}
           className={`flex overflow-x-auto pb-8 gap-4 scrollbar-thin scrollbar-thumb-secondary scrollbar-track-transparent ${
-            shouldCenter ? 'justify-center' : 'justify-start'
+            shouldCenter ? "justify-center" : "justify-start"
           }`}
         >
           {sortedQuestions.map((question) => (
@@ -73,5 +75,5 @@ export const PresetQuestionButtons = ({ onSelectQuestion }: Props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

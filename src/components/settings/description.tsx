@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 const Description = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <>
@@ -15,15 +15,15 @@ const Description = () => {
             height={24}
             className="mr-2"
           />
-          <h2 className="text-2xl font-bold">{t('AboutThisApplication')}</h2>
+          <h2 className="text-2xl font-bold">{t("AboutThisApplication")}</h2>
         </div>
         <div className="mb-6">
           <div className="my-2 whitespace-pre-line">
-            {t('AboutThisApplicationDescription2')}
+            {t("AboutThisApplicationDescription2")}
           </div>
         </div>
         <div className="my-10">
-          <div className="mb-4 text-xl font-bold">{t('Contact')}</div>
+          <div className="mb-4 text-xl font-bold">{t("Contact")}</div>
           <div className="my-2 whitespace-pre-line">
             <a
               href="mailto:support@aituberkit.com"
@@ -42,9 +42,9 @@ const Description = () => {
           </div>
         </div>
         <div className="mt-10">
-          <div className="mb-4 text-xl font-bold">{t('Creator')}</div>
+          <div className="mb-4 text-xl font-bold">{t("Creator")}</div>
           <div className="my-2 whitespace-pre-line">
-            {t('CreatorDescription')}
+            {t("CreatorDescription")}
           </div>
           <div className="my-2 whitespace-pre-line">
             <a
@@ -56,9 +56,9 @@ const Description = () => {
           </div>
         </div>
         <div className="mt-10">
-          <div className="mb-4 text-xl font-bold">{t('Documentation')}</div>
+          <div className="mb-4 text-xl font-bold">{t("Documentation")}</div>
           <div className="my-2 whitespace-pre-line">
-            {t('DocumentationDescription')}
+            {t("DocumentationDescription")}
           </div>
           <div className="my-2 whitespace-pre-line">
             <a
@@ -73,6 +73,6 @@ const Description = () => {
         </div>
       </div>
     </>
-  )
-}
-export default Description
+  );
+};
+export default Description;

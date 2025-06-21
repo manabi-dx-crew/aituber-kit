@@ -1,4 +1,4 @@
-import getConfig from 'next/config'
+import getConfig from "next/config";
 
 /**
  * github pagesに公開時にアセットを読み込めるようにするため、
@@ -8,15 +8,15 @@ export function buildUrl(path: string): string {
   const {
     publicRuntimeConfig,
   }: {
-    publicRuntimeConfig: { root: string }
-  } = getConfig()
+    publicRuntimeConfig: { root: string };
+  } = getConfig();
 
   // 空白などの特殊文字を含むパスを適切にエンコード
   // ただし、パス区切り文字（/）はエンコードしない
   const encodedPath = path
-    .split('/')
+    .split("/")
     .map((segment) => encodeURIComponent(segment))
-    .join('/')
+    .join("/");
 
-  return publicRuntimeConfig.root + encodedPath
+  return publicRuntimeConfig.root + encodedPath;
 }

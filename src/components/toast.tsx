@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import { IconButton } from './iconButton'
-import { useTranslation } from 'react-i18next'
+import React, { useEffect } from "react";
+import { IconButton } from "./iconButton";
+import { useTranslation } from "react-i18next";
 
 type ToastProps = {
-  message: string
-  type: 'success' | 'error' | 'info' | 'tool'
-  onClose: () => void
-  duration?: number
-  closing?: boolean
-}
+  message: string;
+  type: "success" | "error" | "info" | "tool";
+  onClose: () => void;
+  duration?: number;
+  closing?: boolean;
+};
 
 export const Toast = ({
   message,
@@ -17,44 +17,44 @@ export const Toast = ({
   duration = 5000,
   closing = false,
 }: ToastProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      onClose()
-    }, duration)
+      onClose();
+    }, duration);
 
-    return () => clearTimeout(timer)
-  }, [onClose, duration])
+    return () => clearTimeout(timer);
+  }, [onClose, duration]);
 
   const getIconColor = () => {
     switch (type) {
-      case 'success':
-        return 'text-toast-success'
-      case 'error':
-        return 'text-toast-error'
-      case 'tool':
-        return 'text-toast-tool'
+      case "success":
+        return "text-toast-success";
+      case "error":
+        return "text-toast-error";
+      case "tool":
+        return "text-toast-tool";
       default:
-        return 'text-toast-info'
+        return "text-toast-info";
     }
-  }
+  };
 
   const getIconName = () => {
     switch (type) {
-      case 'success':
-        return '24/Check'
-      case 'error':
-        return '24/Error'
+      case "success":
+        return "24/Check";
+      case "error":
+        return "24/Error";
       default:
-        return '24/CommentOutline'
+        return "24/CommentOutline";
     }
-  }
+  };
 
   return (
     <div
       className={`cursor-pointer top-4 right-4 p-4 rounded-2xl text-text1 shadow-lg text-sm flex items-center justify-between mb-2 bg-white bg-opacity-80 transition-opacity duration-300 ${
-        closing ? 'opacity-0' : 'opacity-100'
+        closing ? "opacity-0" : "opacity-100"
       }`}
     >
       <div className="flex items-center">
@@ -75,5 +75,5 @@ export const Toast = ({
         className="!p-2 !bg-transparent !hover:bg-black/10"
       />
     </div>
-  )
-}
+  );
+};

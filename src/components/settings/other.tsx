@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next'
-import Image from 'next/image'
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
-import AdvancedSettings from './advancedSettings'
-import MessageReceiverSetting from './messageReceiver'
-import PresetQuestions from './presetQuestions'
+import AdvancedSettings from "./advancedSettings";
+import MessageReceiverSetting from "./messageReceiver";
+import PresetQuestions from "./presetQuestions";
 
 const Other = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <>
@@ -18,13 +18,13 @@ const Other = () => {
           height={24}
           className="mr-2"
         />
-        <h2 className="text-2xl font-bold">{t('OtherSettings')}</h2>
+        <h2 className="text-2xl font-bold">{t("OtherSettings")}</h2>
       </div>
 
       <AdvancedSettings />
       <PresetQuestions />
       <MessageReceiverSetting />
     </>
-  )
-}
-export default Other
+  );
+};
+export default Other;

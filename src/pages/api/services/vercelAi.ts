@@ -1,19 +1,19 @@
-import { Message } from '@/features/messages/messages'
-import { createOpenAI } from '@ai-sdk/openai'
-import { createAnthropic } from '@ai-sdk/anthropic'
-import { createXai } from '@ai-sdk/xai'
-import { createGoogleGenerativeAI } from '@ai-sdk/google'
-import { createCohere } from '@ai-sdk/cohere'
-import { createMistral } from '@ai-sdk/mistral'
-import { createAzure } from '@ai-sdk/azure'
-import { createDeepSeek } from '@ai-sdk/deepseek'
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
-import { createOllama } from 'ollama-ai-provider'
-import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { streamText, generateText, CoreMessage } from 'ai'
-import { VercelAIService } from '@/features/constants/settings'
+import { Message } from "@/features/messages/messages";
+import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createXai } from "@ai-sdk/xai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createCohere } from "@ai-sdk/cohere";
+import { createMistral } from "@ai-sdk/mistral";
+import { createAzure } from "@ai-sdk/azure";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { createOllama } from "ollama-ai-provider";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { streamText, generateText, CoreMessage } from "ai";
+import { VercelAIService } from "@/features/constants/settings";
 
-type AIServiceConfig = Record<VercelAIService, (params: any) => any>
+type AIServiceConfig = Record<VercelAIService, (params: any) => any>;
 
 /**
  * Vercel AI SDKを使用したAIサービス設定
@@ -30,25 +30,25 @@ export const aiServiceConfig: AIServiceConfig = {
   xai: ({ apiKey }) => createXai({ apiKey }),
   groq: ({ apiKey }) =>
     createOpenAI({
-      baseURL: 'https://api.groq.com/openai/v1',
+      baseURL: "https://api.groq.com/openai/v1",
       apiKey,
     }),
   cohere: ({ apiKey }) => createCohere({ apiKey }),
   mistralai: ({ apiKey }) => createMistral({ apiKey }),
   perplexity: ({ apiKey }) =>
-    createOpenAI({ baseURL: 'https://api.perplexity.ai/', apiKey }),
+    createOpenAI({ baseURL: "https://api.perplexity.ai/", apiKey }),
   fireworks: ({ apiKey }) =>
     createOpenAI({
-      baseURL: 'https://api.fireworks.ai/inference/v1',
+      baseURL: "https://api.fireworks.ai/inference/v1",
       apiKey,
     }),
   deepseek: ({ apiKey }) => createDeepSeek({ apiKey }),
   openrouter: ({ apiKey }) => createOpenRouter({ apiKey }),
   lmstudio: ({ baseURL }) =>
-    createOpenAICompatible({ name: 'lmstudio', baseURL }),
+    createOpenAICompatible({ name: "lmstudio", baseURL }),
   ollama: ({ baseURL }) => createOllama({ baseURL }),
-  'custom-api': () => null, // 特別な処理はせず、カスタムAPI用
-}
+  "custom-api": () => null, // 特別な処理はせず、カスタムAPI用
+};
 
 /**
  * ストリーミングでテキスト生成を行う
@@ -61,12 +61,12 @@ export async function streamAiText({
   maxTokens,
   options = {},
 }: {
-  model: string
-  modelInstance: any
-  messages: Message[]
-  temperature: number
-  maxTokens: number
-  options?: any
+  model: string;
+  modelInstance: any;
+  messages: Message[];
+  temperature: number;
+  maxTokens: number;
+  options?: any;
 }) {
   try {
     const result = await streamText({
@@ -74,23 +74,25 @@ export async function streamAiText({
       messages: messages as CoreMessage[],
       temperature,
       maxTokens,
-    })
+    });
 
-    return result.toDataStreamResponse()
+    return result.toDataStreamResponse();
   } catch (error: any) {
-    console.error(`Vercel AI Stream Error: ${error.message || 'Unknown error'}`)
-    console.error(`Model: ${model}, Temperature: ${temperature}`)
+    console.error(
+      `Vercel AI Stream Error: ${error.message || "Unknown error"}`,
+    );
+    console.error(`Model: ${model}, Temperature: ${temperature}`);
 
     return new Response(
       JSON.stringify({
-        error: `AI Service Error: ${error.message || 'Unknown error'}`,
-        errorCode: 'AIServiceError',
+        error: `AI Service Error: ${error.message || "Unknown error"}`,
+        errorCode: "AIServiceError",
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }
 
@@ -104,11 +106,11 @@ export async function generateAiText({
   temperature,
   maxTokens,
 }: {
-  model: string
-  modelInstance: any
-  messages: Message[]
-  temperature: number
-  maxTokens: number
+  model: string;
+  modelInstance: any;
+  messages: Message[];
+  temperature: number;
+  maxTokens: number;
 }) {
   try {
     const result = await generateText({
@@ -116,27 +118,27 @@ export async function generateAiText({
       messages: messages as CoreMessage[],
       temperature,
       maxTokens,
-    })
+    });
 
     return new Response(JSON.stringify({ text: result.text }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error: any) {
     console.error(
-      `Vercel AI Generate Error: ${error.message || 'Unknown error'}`
-    )
-    console.error(`Model: ${model}, Temperature: ${temperature}`)
+      `Vercel AI Generate Error: ${error.message || "Unknown error"}`,
+    );
+    console.error(`Model: ${model}, Temperature: ${temperature}`);
 
     return new Response(
       JSON.stringify({
-        error: `AI Service Error: ${error.message || 'Unknown error'}`,
-        errorCode: 'AIServiceError',
+        error: `AI Service Error: ${error.message || "Unknown error"}`,
+        errorCode: "AIServiceError",
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }

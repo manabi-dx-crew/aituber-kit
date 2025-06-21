@@ -1,58 +1,60 @@
-import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link' // Link をインポート
-import settingsStore from '@/features/stores/settings'
-import { isMultiModalModel } from '@/features/constants/aiModels'
-import menuStore from '@/features/stores/menu'
-import slideStore from '@/features/stores/slide'
-import { TextButton } from '../textButton'
-import SlideConvert from './slideConvert'
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link"; // Link をインポート
+import settingsStore from "@/features/stores/settings";
+import { isMultiModalModel } from "@/features/constants/aiModels";
+import menuStore from "@/features/stores/menu";
+import slideStore from "@/features/stores/slide";
+import { TextButton } from "../textButton";
+import SlideConvert from "./slideConvert";
 
 const Slide = () => {
-  const { t } = useTranslation()
-  const selectAIService = settingsStore((s) => s.selectAIService)
-  const selectAIModel = settingsStore((s) => s.selectAIModel)
+  const { t } = useTranslation();
+  const selectAIService = settingsStore((s) => s.selectAIService);
+  const selectAIModel = settingsStore((s) => s.selectAIModel);
 
-  const slideMode = settingsStore((s) => s.slideMode)
+  const slideMode = settingsStore((s) => s.slideMode);
 
-  const selectedSlideDocs = slideStore((s) => s.selectedSlideDocs)
-  const [slideFolders, setSlideFolders] = useState<string[]>([])
-  const [updateKey, setUpdateKey] = useState(0)
+  const selectedSlideDocs = slideStore((s) => s.selectedSlideDocs);
+  const [slideFolders, setSlideFolders] = useState<string[]>([]);
+  const [updateKey, setUpdateKey] = useState(0);
 
   useEffect(() => {
     if (slideMode) {
       // フォルダリストを取得
-      fetch('/api/getSlideFolders')
+      fetch("/api/getSlideFolders")
         .then((response) => response.json())
         .then((data) => setSlideFolders(data))
-        .catch((error) => console.error('Error fetching slide folders:', error))
+        .catch((error) =>
+          console.error("Error fetching slide folders:", error),
+        );
     }
-  }, [slideMode, updateKey])
+  }, [slideMode, updateKey]);
 
   const handleFolderUpdate = () => {
-    setUpdateKey((prevKey) => prevKey + 1) // 更新トリガー
-  }
+    setUpdateKey((prevKey) => prevKey + 1); // 更新トリガー
+  };
 
   const toggleSlideMode = () => {
-    const newSlideMode = !slideMode
+    const newSlideMode = !slideMode;
     settingsStore.setState({
       slideMode: newSlideMode,
-    })
-    menuStore.setState({ slideVisible: newSlideMode })
+    });
+    menuStore.setState({ slideVisible: newSlideMode });
     if (newSlideMode) {
       settingsStore.setState({
         youtubeMode: false,
         conversationContinuityMode: false,
-      })
+      });
     }
-  }
+  };
 
   const handleFolderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    slideStore.setState({ selectedSlideDocs: e.target.value })
-    slideStore.setState({ isPlaying: false })
-    slideStore.setState({ currentSlide: 0 })
-  }
+    slideStore.setState({ selectedSlideDocs: e.target.value });
+    slideStore.setState({ isPlaying: false });
+    slideStore.setState({ currentSlide: 0 });
+  };
 
   return (
     <>
@@ -64,33 +66,33 @@ const Slide = () => {
           height={24}
           className="mr-2"
         />
-        <h2 className="text-2xl font-bold">{t('SlideSettings')}</h2>
+        <h2 className="text-2xl font-bold">{t("SlideSettings")}</h2>
       </div>
-      <div className="mb-4 text-xl font-bold">{t('SlideMode')}</div>
-      <p className="">{t('SlideModeDescription')}</p>
+      <div className="mb-4 text-xl font-bold">{t("SlideMode")}</div>
+      <p className="">{t("SlideModeDescription")}</p>
       <div className="my-2">
         <TextButton
           onClick={toggleSlideMode}
           disabled={!isMultiModalModel(selectAIService, selectAIModel)}
         >
-          {slideMode ? t('StatusOn') : t('StatusOff')}
+          {slideMode ? t("StatusOn") : t("StatusOff")}
         </TextButton>
       </div>
       {slideMode && (
         <>
           <div className="mt-6 mb-4 text-xl font-bold">
-            {t('SelectedSlideDocs')}
+            {t("SelectedSlideDocs")}
           </div>
           {/* プルダウンと編集ボタンを横並びにする */}
           <div className="flex items-center gap-2">
             <select
               id="folder-select"
               className="px-4 py-2 bg-white hover:bg-white-hover rounded-lg w-full md:w-1/2"
-              value={selectedSlideDocs || ''}
+              value={selectedSlideDocs || ""}
               onChange={handleFolderChange}
               key={updateKey}
             >
-              <option value="">{t('PleaseSelectSlide')}</option>
+              <option value="">{t("PleaseSelectSlide")}</option>
               {slideFolders.map((folder) => (
                 <option key={folder} value={folder}>
                   {folder}
@@ -109,7 +111,7 @@ const Slide = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-3 py-2 text-sm bg-primary hover:bg-primary-hover rounded-3xl text-white font-bold transition-colors duration-200 whitespace-nowrap"
                 >
-                  {t('EditSlideScripts')}
+                  {t("EditSlideScripts")}
                   <Image
                     src="/images/icons/external-link.svg"
                     alt="open in new tab"
@@ -127,7 +129,7 @@ const Slide = () => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Slide
+export default Slide;

@@ -1,25 +1,25 @@
-import { useState, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import slideStore from '@/features/stores/slide'
-import { IconButton } from './iconButton'
+import homeStore from "@/features/stores/home";
+import settingsStore from "@/features/stores/settings";
+import slideStore from "@/features/stores/slide";
+import { IconButton } from "./iconButton";
 
 type Props = {
-  userMessage: string
-  isMicRecording: boolean
+  userMessage: string;
+  isMicRecording: boolean;
   onChangeUserMessage: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void
-  onClickSendButton: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onClickMicButton: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onClickStopButton: (event: React.MouseEvent<HTMLButtonElement>) => void
-  isSpeaking: boolean
-  silenceTimeoutRemaining: number | null
-  continuousMicListeningMode: boolean
-  onToggleContinuousMode: (event: React.MouseEvent<HTMLButtonElement>) => void
-}
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onClickSendButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickMicButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickStopButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isSpeaking: boolean;
+  silenceTimeoutRemaining: number | null;
+  continuousMicListeningMode: boolean;
+  onToggleContinuousMode: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
 
 export const MessageInput = ({
   userMessage,
@@ -32,75 +32,75 @@ export const MessageInput = ({
   silenceTimeoutRemaining,
   continuousMicListeningMode,
 }: Props) => {
-  const chatProcessing = homeStore((s) => s.chatProcessing)
-  const slidePlaying = slideStore((s) => s.isPlaying)
-  const [rows, setRows] = useState(1)
-  const [loadingDots, setLoadingDots] = useState('')
-  const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
-  const showSilenceProgressBar = settingsStore((s) => s.showSilenceProgressBar)
-  const speechRecognitionMode = settingsStore((s) => s.speechRecognitionMode)
+  const chatProcessing = homeStore((s) => s.chatProcessing);
+  const slidePlaying = slideStore((s) => s.isPlaying);
+  const [rows, setRows] = useState(1);
+  const [loadingDots, setLoadingDots] = useState("");
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
+  const showSilenceProgressBar = settingsStore((s) => s.showSilenceProgressBar);
+  const speechRecognitionMode = settingsStore((s) => s.speechRecognitionMode);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (chatProcessing) {
       const interval = setInterval(() => {
         setLoadingDots((prev) => {
-          if (prev === '...') return ''
-          return prev + '.'
-        })
-      }, 200)
+          if (prev === "...") return "";
+          return prev + ".";
+        });
+      }, 200);
 
-      return () => clearInterval(interval)
+      return () => clearInterval(interval);
     } else {
       if (textareaRef.current) {
-        textareaRef.current.value = ''
+        textareaRef.current.value = "";
         const isTouchDevice = () => {
-          if (typeof window === 'undefined') return false
+          if (typeof window === "undefined") return false;
           return (
-            'ontouchstart' in window ||
+            "ontouchstart" in window ||
             navigator.maxTouchPoints > 0 ||
             // @ts-expect-error: msMaxTouchPoints is IE-specific
             navigator.msMaxTouchPoints > 0
-          )
-        }
+          );
+        };
         if (!isTouchDevice()) {
-          textareaRef.current.focus()
+          textareaRef.current.focus();
         }
       }
     }
-  }, [chatProcessing])
+  }, [chatProcessing]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (
       !event.nativeEvent.isComposing &&
       event.keyCode !== 229 && // IME (Input Method Editor)
-      event.key === 'Enter' &&
+      event.key === "Enter" &&
       !event.shiftKey
     ) {
-      event.preventDefault() // デフォルトの挙動を防止
-      if (userMessage.trim() !== '') {
+      event.preventDefault(); // デフォルトの挙動を防止
+      if (userMessage.trim() !== "") {
         onClickSendButton(
-          event as unknown as React.MouseEvent<HTMLButtonElement>
-        )
-        setRows(1)
+          event as unknown as React.MouseEvent<HTMLButtonElement>,
+        );
+        setRows(1);
       }
-    } else if (event.key === 'Enter' && event.shiftKey) {
-      setRows(rows + 1)
+    } else if (event.key === "Enter" && event.shiftKey) {
+      setRows(rows + 1);
     } else if (
-      event.key === 'Backspace' &&
+      event.key === "Backspace" &&
       rows > 1 &&
-      userMessage.slice(-1) === '\n'
+      userMessage.slice(-1) === "\n"
     ) {
-      setRows(rows - 1)
+      setRows(rows - 1);
     }
-  }
+  };
 
   const handleMicClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onClickMicButton(event)
-  }
+    onClickMicButton(event);
+  };
 
   return (
     <div className="absolute bottom-0 z-20 w-screen">
@@ -108,14 +108,14 @@ export const MessageInput = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-2xl max-w-md">
             <h3 className="text-xl font-bold mb-4">
-              {t('MicrophonePermission')}
+              {t("MicrophonePermission")}
             </h3>
-            <p className="mb-4">{t('MicrophonePermissionMessage')}</p>
+            <p className="mb-4">{t("MicrophonePermissionMessage")}</p>
             <button
               className="bg-secondary hover:bg-secondary-hover px-4 py-2 rounded-lg"
               onClick={() => setShowPermissionModal(false)}
             >
-              {t('Close')}
+              {t("Close")}
             </button>
           </div>
         </div>
@@ -140,10 +140,10 @@ export const MessageInput = ({
                               300) /
                               (settingsStore.getState().noSpeechTimeout * 1000 -
                                 600)) *
-                              100
-                          )
+                              100,
+                          ),
                         )}%`
-                      : '0%',
+                      : "0%",
                 }}
               ></div>
             </div>
@@ -153,11 +153,11 @@ export const MessageInput = ({
               iconName="24/Microphone"
               backgroundColor={
                 continuousMicListeningMode
-                  ? 'bg-green-500 hover:bg-green-600 active:bg-green-700 text-white'
+                  ? "bg-green-500 hover:bg-green-600 active:bg-green-700 text-white"
                   : undefined
               }
               isProcessing={isMicRecording}
-              isProcessingIcon={'24/PauseAlt'}
+              isProcessingIcon={"24/PauseAlt"}
               disabled={chatProcessing || isSpeaking}
               onClick={handleMicClick}
             />
@@ -165,10 +165,10 @@ export const MessageInput = ({
               ref={textareaRef}
               placeholder={
                 chatProcessing
-                  ? `${t('AnswerGenerating')}${loadingDots}`
+                  ? `${t("AnswerGenerating")}${loadingDots}`
                   : continuousMicListeningMode && isMicRecording
-                    ? t('ListeningContinuously')
-                    : t('EnterYourQuestion')
+                    ? t("ListeningContinuously")
+                    : t("EnterYourQuestion")
               }
               onChange={onChangeUserMessage}
               onKeyDown={handleKeyPress}
@@ -176,7 +176,7 @@ export const MessageInput = ({
               className="bg-white hover:bg-white-hover focus:bg-white disabled:bg-gray-100 disabled:text-primary-disabled rounded-2xl w-full px-4 text-text-primary text-base font-bold disabled"
               value={userMessage}
               rows={rows}
-              style={{ lineHeight: '1.5', padding: '8px 16px', resize: 'none' }}
+              style={{ lineHeight: "1.5", padding: "8px 16px", resize: "none" }}
             ></textarea>
 
             <IconButton
@@ -197,5 +197,5 @@ export const MessageInput = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

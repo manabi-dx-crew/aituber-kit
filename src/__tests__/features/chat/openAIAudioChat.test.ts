@@ -1,17 +1,17 @@
-import { getOpenAIAudioChatResponseStream } from '../../../features/chat/openAIAudioChat'
-import OpenAI from 'openai'
-import settingsStore from '../../../features/stores/settings'
-import homeStore from '../../../features/stores/home'
-import { handleReceiveTextFromRtFn } from '../../../features/chat/handlers'
+import { getOpenAIAudioChatResponseStream } from "../../../features/chat/openAIAudioChat";
+import OpenAI from "openai";
+import settingsStore from "../../../features/stores/settings";
+import homeStore from "../../../features/stores/home";
+import { handleReceiveTextFromRtFn } from "../../../features/chat/handlers";
 import {
   AudioBufferManager,
   base64ToArrayBuffer,
-} from '../../../utils/audioBufferManager'
-import { messageSelectors } from '../../../features/messages/messageSelectors'
-import { Message } from '../../../features/messages/messages'
-import { defaultModels } from '../../../features/constants/aiModels'
+} from "../../../utils/audioBufferManager";
+import { messageSelectors } from "../../../features/messages/messageSelectors";
+import { Message } from "../../../features/messages/messages";
+import { defaultModels } from "../../../features/constants/aiModels";
 
-jest.mock('openai', () => {
+jest.mock("openai", () => {
   return {
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
@@ -21,98 +21,98 @@ jest.mock('openai', () => {
         },
       },
     })),
-  }
-})
+  };
+});
 
-jest.mock('../../../features/stores/settings', () => ({
+jest.mock("../../../features/stores/settings", () => ({
   getState: jest.fn(),
-}))
+}));
 
-jest.mock('../../../features/stores/home', () => ({
+jest.mock("../../../features/stores/home", () => ({
   getState: jest.fn(),
-}))
+}));
 
-jest.mock('../../../features/chat/handlers', () => ({
+jest.mock("../../../features/chat/handlers", () => ({
   handleReceiveTextFromRtFn: jest.fn(),
-}))
+}));
 
-jest.mock('../../../utils/audioBufferManager', () => ({
+jest.mock("../../../utils/audioBufferManager", () => ({
   AudioBufferManager: jest.fn(),
   base64ToArrayBuffer: jest.fn(),
-}))
+}));
 
-jest.mock('../../../features/messages/messageSelectors', () => ({
+jest.mock("../../../features/messages/messageSelectors", () => ({
   messageSelectors: {
     getAudioMessages: jest.fn(),
   },
-}))
+}));
 
-describe('openAIAudioChat', () => {
+describe("openAIAudioChat", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.clearAllMocks();
 
     const mockSettings = {
-      openaiKey: 'test-openai-key',
+      openaiKey: "test-openai-key",
       selectAIModel: defaultModels.openaiAudio,
-      audioModeVoice: 'alloy',
-    }
-    ;(settingsStore.getState as jest.Mock).mockReturnValue(mockSettings)
+      audioModeVoice: "alloy",
+    };
+    (settingsStore.getState as jest.Mock).mockReturnValue(mockSettings);
 
-    const mockChatLog: Message[] = []
+    const mockChatLog: Message[] = [];
     const mockHomeStore = {
       chatLog: mockChatLog,
       upsertMessage: jest.fn((newMessage: Message) => {
         const existingIndex = mockChatLog.findIndex(
           (msg) =>
             msg.audio?.id === newMessage.audio?.id &&
-            newMessage.audio?.id !== undefined
-        )
+            newMessage.audio?.id !== undefined,
+        );
         if (existingIndex !== -1) {
           mockChatLog[existingIndex] = {
             ...mockChatLog[existingIndex],
             ...newMessage,
-          }
+          };
         } else {
-          mockChatLog.push(newMessage)
+          mockChatLog.push(newMessage);
         }
       }),
-    }
-    ;(homeStore.getState as jest.Mock).mockImplementation(() => mockHomeStore)
+    };
+    (homeStore.getState as jest.Mock).mockImplementation(() => mockHomeStore);
 
-    const mockHandleReceiveText = jest.fn()
-    ;(handleReceiveTextFromRtFn as jest.Mock).mockReturnValue(
-      mockHandleReceiveText
-    )
-    ;(AudioBufferManager as jest.Mock).mockImplementation((callback) => ({
+    const mockHandleReceiveText = jest.fn();
+    (handleReceiveTextFromRtFn as jest.Mock).mockReturnValue(
+      mockHandleReceiveText,
+    );
+    (AudioBufferManager as jest.Mock).mockImplementation((callback) => ({
       addData: jest.fn(),
       flush: jest.fn().mockResolvedValue(undefined),
       callback,
-    }))
-    ;(base64ToArrayBuffer as jest.Mock).mockReturnValue(new ArrayBuffer(8))
-    ;(messageSelectors.getAudioMessages as jest.Mock).mockImplementation(
-      (messages) => messages
-    )
-  })
+    }));
+    (base64ToArrayBuffer as jest.Mock).mockReturnValue(new ArrayBuffer(8));
+    (messageSelectors.getAudioMessages as jest.Mock).mockImplementation(
+      (messages) => messages,
+    );
+  });
 
   const testMessages: Message[] = [
     {
-      role: 'system',
-      content: 'システムプロンプト',
-      timestamp: '2023-01-01T00:00:00Z',
+      role: "system",
+      content: "システムプロンプト",
+      timestamp: "2023-01-01T00:00:00Z",
     },
-    { role: 'user', content: 'こんにちは', timestamp: '2023-01-01T00:00:01Z' },
-  ]
+    { role: "user", content: "こんにちは", timestamp: "2023-01-01T00:00:01Z" },
+  ];
 
-  describe('getOpenAIAudioChatResponseStream', () => {
-    it('オーディオストリームを正しく処理する', async () => {
+  describe("getOpenAIAudioChatResponseStream", () => {
+    it("オーディオストリームを正しく処理する", async () => {
       const mockChunks = [
         {
           choices: [
             {
               delta: {
                 audio: {
-                  transcript: 'こんにちは、',
-                  data: 'base64data1',
+                  transcript: "こんにちは、",
+                  data: "base64data1",
                 },
               },
             },
@@ -123,8 +123,8 @@ describe('openAIAudioChat', () => {
             {
               delta: {
                 audio: {
-                  transcript: 'お元気ですか？',
-                  data: 'base64data2',
+                  transcript: "お元気ですか？",
+                  data: "base64data2",
                 },
               },
             },
@@ -135,175 +135,175 @@ describe('openAIAudioChat', () => {
             {
               delta: {
                 audio: {
-                  id: 'audio-id-123',
+                  id: "audio-id-123",
                 },
               },
             },
           ],
         },
-      ]
+      ];
 
       const mockAsyncIterator = {
         async *[Symbol.asyncIterator]() {
           for (const chunk of mockChunks) {
-            yield chunk
+            yield chunk;
           }
         },
-      }
+      };
 
-      const mockCreate = jest.fn().mockResolvedValue(mockAsyncIterator)
-      ;(OpenAI as unknown as jest.Mock).mockImplementation(() => ({
+      const mockCreate = jest.fn().mockResolvedValue(mockAsyncIterator);
+      (OpenAI as unknown as jest.Mock).mockImplementation(() => ({
         chat: {
           completions: {
             create: mockCreate,
           },
         },
-      }))
+      }));
 
       const mockController = {
         enqueue: jest.fn(),
         close: jest.fn(),
-      }
+      };
 
-      const stream = await getOpenAIAudioChatResponseStream(testMessages)
+      const stream = await getOpenAIAudioChatResponseStream(testMessages);
 
       // ストリームの内容を読み取る
-      const reader = (stream as ReadableStream<string>).getReader()
-      let result = ''
-      let done = false
+      const reader = (stream as ReadableStream<string>).getReader();
+      let result = "";
+      let done = false;
       while (!done) {
-        const { value, done: readerDone } = await reader.read()
+        const { value, done: readerDone } = await reader.read();
         if (readerDone) {
-          done = true
-          break
+          done = true;
+          break;
         }
         if (value) {
           // 実際の enqueue 呼び出しを模倣（テストのアサーション用）
-          mockController.enqueue(value)
-          result += value
+          mockController.enqueue(value);
+          result += value;
         }
       }
 
       expect(OpenAI).toHaveBeenCalledWith({
-        apiKey: 'test-openai-key',
+        apiKey: "test-openai-key",
         dangerouslyAllowBrowser: true,
-      })
+      });
 
       expect(mockCreate).toHaveBeenCalledWith({
         model: defaultModels.openaiAudio,
         messages: testMessages,
         stream: true,
-        modalities: ['text', 'audio'],
+        modalities: ["text", "audio"],
         audio: {
-          voice: 'alloy',
-          format: 'pcm16',
+          voice: "alloy",
+          format: "pcm16",
         },
-      })
+      });
 
-      expect(mockController.enqueue).toHaveBeenCalledWith('こんにちは、')
-      expect(mockController.enqueue).toHaveBeenCalledWith('お元気ですか？')
+      expect(mockController.enqueue).toHaveBeenCalledWith("こんにちは、");
+      expect(mockController.enqueue).toHaveBeenCalledWith("お元気ですか？");
 
-      expect(base64ToArrayBuffer).toHaveBeenCalledWith('base64data1')
-      expect(base64ToArrayBuffer).toHaveBeenCalledWith('base64data2')
+      expect(base64ToArrayBuffer).toHaveBeenCalledWith("base64data1");
+      expect(base64ToArrayBuffer).toHaveBeenCalledWith("base64data2");
 
       const bufferManagerInstance = (AudioBufferManager as jest.Mock).mock
-        .results[0].value
-      expect(bufferManagerInstance.addData).toHaveBeenCalledTimes(2)
+        .results[0].value;
+      expect(bufferManagerInstance.addData).toHaveBeenCalledTimes(2);
 
       expect(homeStore.getState().chatLog).toContainEqual({
-        role: 'assistant',
-        audio: { id: 'audio-id-123' },
-        content: '',
-        id: 'audio-id-123',
-      })
+        role: "assistant",
+        audio: { id: "audio-id-123" },
+        content: "",
+        id: "audio-id-123",
+      });
 
-      expect(bufferManagerInstance.flush).toHaveBeenCalled()
-    })
+      expect(bufferManagerInstance.flush).toHaveBeenCalled();
+    });
 
-    it('APIエラーを適切に処理する', async () => {
-      const mockError = new Error('API error')
-      const mockCreate = jest.fn().mockRejectedValue(mockError)
-      ;(OpenAI as unknown as jest.Mock).mockImplementation(() => ({
+    it("APIエラーを適切に処理する", async () => {
+      const mockError = new Error("API error");
+      const mockCreate = jest.fn().mockRejectedValue(mockError);
+      (OpenAI as unknown as jest.Mock).mockImplementation(() => ({
         chat: {
           completions: {
             create: mockCreate,
           },
         },
-      }))
+      }));
 
-      const originalConsoleError = console.error
-      console.error = jest.fn()
+      const originalConsoleError = console.error;
+      console.error = jest.fn();
 
       // エラーが発生することを期待する
       await expect(
-        getOpenAIAudioChatResponseStream(testMessages)
-      ).rejects.toThrow('API error')
+        getOpenAIAudioChatResponseStream(testMessages),
+      ).rejects.toThrow("API error");
 
       // エラーがコンソールに出力されることを確認
       expect(console.error).toHaveBeenCalledWith(
-        'OpenAI Audio API error:',
-        mockError
-      )
+        "OpenAI Audio API error:",
+        mockError,
+      );
 
-      console.error = originalConsoleError
-    })
+      console.error = originalConsoleError;
+    });
 
-    it('オーディオデータなしのレスポンスを処理する', async () => {
+    it("オーディオデータなしのレスポンスを処理する", async () => {
       const mockChunks = [
         {
           choices: [
             {
               delta: {
-                content: 'テキストのみの応答', // オーディオデータなし
+                content: "テキストのみの応答", // オーディオデータなし
               },
             },
           ],
         },
-      ]
+      ];
 
       const mockAsyncIterator = {
         async *[Symbol.asyncIterator]() {
           for (const chunk of mockChunks) {
-            yield chunk
+            yield chunk;
           }
         },
-      }
+      };
 
-      const mockCreate = jest.fn().mockResolvedValue(mockAsyncIterator)
-      ;(OpenAI as unknown as jest.Mock).mockImplementation(() => ({
+      const mockCreate = jest.fn().mockResolvedValue(mockAsyncIterator);
+      (OpenAI as unknown as jest.Mock).mockImplementation(() => ({
         chat: {
           completions: {
             create: mockCreate,
           },
         },
-      }))
+      }));
 
       const mockController = {
         // このテストケース用のmockController
         enqueue: jest.fn(),
         close: jest.fn(),
-      }
+      };
 
-      const stream = await getOpenAIAudioChatResponseStream(testMessages)
+      const stream = await getOpenAIAudioChatResponseStream(testMessages);
 
       // ストリームの内容を読み取る
-      const reader = (stream as ReadableStream<string>).getReader()
+      const reader = (stream as ReadableStream<string>).getReader();
       while (true) {
-        const { done } = await reader.read()
-        if (done) break
+        const { done } = await reader.read();
+        if (done) break;
         // データは処理しない（テキストのみのため）
       }
 
-      expect(mockController.enqueue).not.toHaveBeenCalled() // mockController.enqueue は呼ばれないはず
-      expect(base64ToArrayBuffer).not.toHaveBeenCalled()
+      expect(mockController.enqueue).not.toHaveBeenCalled(); // mockController.enqueue は呼ばれないはず
+      expect(base64ToArrayBuffer).not.toHaveBeenCalled();
 
       // AudioBufferManager のインスタンスを取得して確認
       const bufferManagerInstance = (AudioBufferManager as jest.Mock).mock
-        .results[0].value // このテストケースでのインスタンスを取得
-      expect(bufferManagerInstance.addData).not.toHaveBeenCalled()
+        .results[0].value; // このテストケースでのインスタンスを取得
+      expect(bufferManagerInstance.addData).not.toHaveBeenCalled();
 
-      expect(bufferManagerInstance.flush).toHaveBeenCalled()
+      expect(bufferManagerInstance.flush).toHaveBeenCalled();
       // ストリームが正常に終了したことを確認 (read ループの終了で確認)
-    })
-  })
-})
+    });
+  });
+});

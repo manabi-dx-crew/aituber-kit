@@ -4,22 +4,22 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from 'react'
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import { IconButton } from '../iconButton'
-import { useDraggable } from '@/hooks/useDraggable'
-import { useResizable } from '@/hooks/useResizable'
+} from "react";
+import homeStore from "@/features/stores/home";
+import settingsStore from "@/features/stores/settings";
+import { IconButton } from "../iconButton";
+import { useDraggable } from "@/hooks/useDraggable";
+import { useResizable } from "@/hooks/useResizable";
 
 interface VideoDisplayProps {
-  videoRef: React.RefObject<HTMLVideoElement>
-  mediaStream?: MediaStream | null
-  onCapture?: () => void
-  onToggleSource?: () => void
-  toggleSourceIcon?: string
-  toggleSourceDisabled?: boolean
-  showToggleButton?: boolean
-  className?: string
+  videoRef: React.RefObject<HTMLVideoElement>;
+  mediaStream?: MediaStream | null;
+  onCapture?: () => void;
+  onToggleSource?: () => void;
+  toggleSourceIcon?: string;
+  toggleSourceDisabled?: boolean;
+  showToggleButton?: boolean;
+  className?: string;
 }
 
 export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
@@ -29,131 +29,132 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
       mediaStream,
       onCapture,
       onToggleSource,
-      toggleSourceIcon = '24/Roll',
+      toggleSourceIcon = "24/Roll",
       toggleSourceDisabled = false,
       showToggleButton = true,
-      className = '',
+      className = "",
     },
-    ref
+    ref,
   ) => {
-    const triggerShutter = homeStore((s) => s.triggerShutter)
-    const useVideoAsBackground = settingsStore((s) => s.useVideoAsBackground)
-    const backgroundVideoRef = useRef<HTMLVideoElement>(null)
-    const [isExpanded, setIsExpanded] = useState(false)
-    const containerRef = useRef<HTMLDivElement>(null)
+    const triggerShutter = homeStore((s) => s.triggerShutter);
+    const useVideoAsBackground = settingsStore((s) => s.useVideoAsBackground);
+    const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [videoBounds, setVideoBounds] = useState({
       x: 0,
       y: 0,
       width: 0,
       height: 0,
-    })
+    });
     const {
       isMobile,
       handleMouseDown,
       resetPosition,
       style: dragStyle,
-    } = useDraggable()
+    } = useDraggable();
     const { size, isResizing, handleResizeStart, resetSize } = useResizable({
       aspectRatio: true,
-    })
+    });
 
     // Handle background video sync
     useEffect(() => {
+      const currentBackgroundVideo = backgroundVideoRef.current;
       if (useVideoAsBackground && videoRef.current?.srcObject) {
-        if (backgroundVideoRef.current) {
-          backgroundVideoRef.current.srcObject = videoRef.current.srcObject
+        if (currentBackgroundVideo) {
+          currentBackgroundVideo.srcObject = videoRef.current.srcObject;
         }
       } else if (!useVideoAsBackground) {
-        if (backgroundVideoRef.current) {
-          backgroundVideoRef.current.srcObject = null
+        if (currentBackgroundVideo) {
+          currentBackgroundVideo.srcObject = null;
         }
       }
 
       return () => {
-        if (backgroundVideoRef.current) {
-          backgroundVideoRef.current.srcObject = null
+        if (currentBackgroundVideo) {
+          currentBackgroundVideo.srcObject = null;
         }
-      }
-    }, [useVideoAsBackground, videoRef])
+      };
+    }, [useVideoAsBackground, videoRef]);
 
     // Handle media stream updates
     useEffect(() => {
       if (mediaStream && useVideoAsBackground && backgroundVideoRef.current) {
-        backgroundVideoRef.current.srcObject = mediaStream
-        backgroundVideoRef.current.play().catch(console.error)
+        backgroundVideoRef.current.srcObject = mediaStream;
+        backgroundVideoRef.current.play().catch(console.error);
       }
-    }, [mediaStream, useVideoAsBackground])
+    }, [mediaStream, useVideoAsBackground]);
 
     const handleCapture = useCallback(() => {
-      if (!videoRef.current) return
+      if (!videoRef.current) return;
       if (
         videoRef.current.videoWidth === 0 ||
         videoRef.current.videoHeight === 0
       )
-        return
+        return;
 
-      const canvas = document.createElement('canvas')
-      canvas.width = videoRef.current.videoWidth
-      canvas.height = videoRef.current.videoHeight
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-      ctx.drawImage(videoRef.current, 0, 0)
-      const data = canvas.toDataURL('image/png')
+      ctx.drawImage(videoRef.current, 0, 0);
+      const data = canvas.toDataURL("image/png");
 
-      if (data !== '') {
-        console.log('capture')
+      if (data !== "") {
+        console.log("capture");
         homeStore.setState({
           modalImage: data,
           triggerShutter: false,
-        })
+        });
       } else {
-        homeStore.setState({ modalImage: '' })
+        homeStore.setState({ modalImage: "" });
       }
 
-      onCapture?.()
-    }, [videoRef, onCapture])
+      onCapture?.();
+    }, [videoRef, onCapture]);
 
     useEffect(() => {
       if (triggerShutter) {
-        handleCapture()
+        handleCapture();
       }
-    }, [triggerShutter, handleCapture])
+    }, [triggerShutter, handleCapture]);
 
     const handleExpand = useCallback(() => {
-      setIsExpanded(!isExpanded)
-      settingsStore.setState({ useVideoAsBackground: !isExpanded })
-      resetPosition()
-      resetSize()
-    }, [isExpanded, resetPosition, resetSize])
+      setIsExpanded(!isExpanded);
+      settingsStore.setState({ useVideoAsBackground: !isExpanded });
+      resetPosition();
+      resetSize();
+    }, [isExpanded, resetPosition, resetSize]);
 
     // Calculate actual video bounds within container
     const updateVideoBounds = useCallback(() => {
-      if (!videoRef.current || !containerRef.current) return
+      if (!videoRef.current || !containerRef.current) return;
 
-      const video = videoRef.current
-      if (video.videoHeight === 0 || video.videoWidth === 0) return
+      const video = videoRef.current;
+      if (video.videoHeight === 0 || video.videoWidth === 0) return;
 
-      const container = containerRef.current
-      const videoAspectRatio = video.videoWidth / video.videoHeight
+      const container = containerRef.current;
+      const videoAspectRatio = video.videoWidth / video.videoHeight;
       const containerAspectRatio =
-        container.clientWidth / container.clientHeight
+        container.clientWidth / container.clientHeight;
 
-      let actualWidth: number
-      let actualHeight: number
-      let offsetX = 0
-      let offsetY = 0
+      let actualWidth: number;
+      let actualHeight: number;
+      let offsetX = 0;
+      let offsetY = 0;
 
       if (videoAspectRatio > containerAspectRatio) {
         // Video is wider than container
-        actualWidth = container.clientWidth
-        actualHeight = container.clientWidth / videoAspectRatio
-        offsetY = 0 // Align to top
+        actualWidth = container.clientWidth;
+        actualHeight = container.clientWidth / videoAspectRatio;
+        offsetY = 0; // Align to top
       } else {
         // Video is taller than container
-        actualHeight = container.clientHeight
-        actualWidth = container.clientHeight * videoAspectRatio
-        offsetX = (container.clientWidth - actualWidth) / 2
+        actualHeight = container.clientHeight;
+        actualWidth = container.clientHeight * videoAspectRatio;
+        offsetX = (container.clientWidth - actualWidth) / 2;
       }
 
       setVideoBounds({
@@ -161,30 +162,30 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
         y: offsetY,
         width: actualWidth,
         height: actualHeight,
-      })
-    }, [videoRef])
+      });
+    }, [videoRef]);
 
     // Update bounds when size changes or video loads
     useEffect(() => {
-      const video = videoRef.current
-      if (!video) return
+      const video = videoRef.current;
+      if (!video) return;
 
       const handleLoadedMetadata = () => {
-        updateVideoBounds()
-      }
+        updateVideoBounds();
+      };
 
-      video.addEventListener('loadedmetadata', handleLoadedMetadata)
-      updateVideoBounds()
+      video.addEventListener("loadedmetadata", handleLoadedMetadata);
+      updateVideoBounds();
 
       return () => {
-        video.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      }
-    }, [videoRef, size, updateVideoBounds])
+        video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      };
+    }, [videoRef, size, updateVideoBounds]);
 
     // Update bounds on resize
     useEffect(() => {
-      updateVideoBounds()
-    }, [size, updateVideoBounds])
+      updateVideoBounds();
+    }, [size, updateVideoBounds]);
 
     return (
       <>
@@ -202,10 +203,10 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
           className={`fixed right-4 top-4 z-10 ${className}`}
           style={{
             ...dragStyle,
-            width: isExpanded ? 'auto' : `${size.width}px`,
-            height: isExpanded ? 'auto' : `${size.height}px`,
-            maxWidth: isExpanded ? '70%' : 'none',
-            maxHeight: isExpanded ? '40vh' : 'none',
+            width: isExpanded ? "auto" : `${size.width}px`,
+            height: isExpanded ? "auto" : `${size.height}px`,
+            maxWidth: isExpanded ? "70%" : "none",
+            maxHeight: isExpanded ? "40vh" : "none",
           }}
         >
           <div
@@ -221,7 +222,7 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
               playsInline
               muted
               className={`w-full h-full object-top ${
-                useVideoAsBackground ? 'invisible' : ''
+                useVideoAsBackground ? "invisible" : ""
               }`}
             />
             {/* Resize handles */}
@@ -234,7 +235,7 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
                     left: `${videoBounds.x}px`,
                     top: `${videoBounds.y}px`,
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'top-left')}
+                  onMouseDown={(e) => handleResizeStart(e, "top-left")}
                 />
                 <div
                   className="absolute w-3 h-3 cursor-nesw-resize"
@@ -242,7 +243,7 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
                     left: `${videoBounds.x + videoBounds.width - 12}px`,
                     top: `${videoBounds.y}px`,
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'top-right')}
+                  onMouseDown={(e) => handleResizeStart(e, "top-right")}
                 />
                 <div
                   className="absolute w-3 h-3 cursor-nesw-resize"
@@ -250,7 +251,7 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
                     left: `${videoBounds.x}px`,
                     top: `${videoBounds.y + videoBounds.height - 12}px`,
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'bottom-left')}
+                  onMouseDown={(e) => handleResizeStart(e, "bottom-left")}
                 />
                 <div
                   className="absolute w-3 h-3 cursor-nwse-resize"
@@ -258,7 +259,7 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
                     left: `${videoBounds.x + videoBounds.width - 12}px`,
                     top: `${videoBounds.y + videoBounds.height - 12}px`,
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
+                  onMouseDown={(e) => handleResizeStart(e, "bottom-right")}
                 />
                 {/* Edge handles */}
                 <div
@@ -266,36 +267,36 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
                   style={{
                     left: `${videoBounds.x + videoBounds.width / 2}px`,
                     top: `${videoBounds.y}px`,
-                    transform: 'translateX(-50%)',
+                    transform: "translateX(-50%)",
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'top')}
+                  onMouseDown={(e) => handleResizeStart(e, "top")}
                 />
                 <div
                   className="absolute w-1/3 h-2 cursor-ns-resize"
                   style={{
                     left: `${videoBounds.x + videoBounds.width / 2}px`,
                     top: `${videoBounds.y + videoBounds.height - 8}px`,
-                    transform: 'translateX(-50%)',
+                    transform: "translateX(-50%)",
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'bottom')}
+                  onMouseDown={(e) => handleResizeStart(e, "bottom")}
                 />
                 <div
                   className="absolute w-2 h-1/3 cursor-ew-resize"
                   style={{
                     left: `${videoBounds.x}px`,
                     top: `${videoBounds.y + videoBounds.height / 2}px`,
-                    transform: 'translateY(-50%)',
+                    transform: "translateY(-50%)",
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'left')}
+                  onMouseDown={(e) => handleResizeStart(e, "left")}
                 />
                 <div
                   className="absolute w-2 h-1/3 cursor-ew-resize"
                   style={{
                     left: `${videoBounds.x + videoBounds.width - 8}px`,
                     top: `${videoBounds.y + videoBounds.height / 2}px`,
-                    transform: 'translateY(-50%)',
+                    transform: "translateY(-50%)",
                   }}
-                  onMouseDown={(e) => handleResizeStart(e, 'right')}
+                  onMouseDown={(e) => handleResizeStart(e, "right")}
                 />
               </>
             )}
@@ -325,8 +326,8 @@ export const VideoDisplay = forwardRef<HTMLDivElement, VideoDisplayProps>(
           </div>
         </div>
       </>
-    )
-  }
-)
+    );
+  },
+);
 
-VideoDisplay.displayName = 'VideoDisplay'
+VideoDisplay.displayName = "VideoDisplay";

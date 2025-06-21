@@ -1,58 +1,58 @@
-import { useTranslation } from 'react-i18next'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
-import Image from 'next/image'
-import { useEffect } from 'react'
-import { WhisperTranscriptionModel } from '@/features/constants/settings'
-import { Link } from '../link'
-import { getOpenAIWhisperModels } from '@/features/constants/aiModels'
+import { useTranslation } from "react-i18next";
+import settingsStore from "@/features/stores/settings";
+import { TextButton } from "../textButton";
+import Image from "next/image";
+import { useEffect } from "react";
+import { WhisperTranscriptionModel } from "@/features/constants/settings";
+import { Link } from "../link";
+import { getOpenAIWhisperModels } from "@/features/constants/aiModels";
 
 const SpeechInput = () => {
-  const noSpeechTimeout = settingsStore((s) => s.noSpeechTimeout)
-  const showSilenceProgressBar = settingsStore((s) => s.showSilenceProgressBar)
-  const speechRecognitionMode = settingsStore((s) => s.speechRecognitionMode)
+  const noSpeechTimeout = settingsStore((s) => s.noSpeechTimeout);
+  const showSilenceProgressBar = settingsStore((s) => s.showSilenceProgressBar);
+  const speechRecognitionMode = settingsStore((s) => s.speechRecognitionMode);
   const whisperTranscriptionModel = settingsStore(
-    (s) => s.whisperTranscriptionModel
-  )
-  const openaiKey = settingsStore((s) => s.openaiKey)
+    (s) => s.whisperTranscriptionModel,
+  );
+  const openaiKey = settingsStore((s) => s.openaiKey);
   const continuousMicListeningMode = settingsStore(
-    (s) => s.continuousMicListeningMode
-  )
-  const initialSpeechTimeout = settingsStore((s) => s.initialSpeechTimeout)
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
-  const audioMode = settingsStore((s) => s.audioMode)
+    (s) => s.continuousMicListeningMode,
+  );
+  const initialSpeechTimeout = settingsStore((s) => s.initialSpeechTimeout);
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
+  const audioMode = settingsStore((s) => s.audioMode);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   // whisperモードの場合、自動的にnoSpeechTimeoutを0に、showSilenceProgressBarをfalseに設定
   useEffect(() => {
-    if (speechRecognitionMode === 'whisper') {
+    if (speechRecognitionMode === "whisper") {
       settingsStore.setState({
         initialSpeechTimeout: 0,
         noSpeechTimeout: 0,
         showSilenceProgressBar: false,
         continuousMicListeningMode: false,
-      })
+      });
     }
-  }, [speechRecognitionMode])
+  }, [speechRecognitionMode]);
 
   // realtimeAPIモードかaudioモードがオンの場合、強制的にbrowserモードに設定
   useEffect(() => {
     if (realtimeAPIMode || audioMode) {
       settingsStore.setState({
-        speechRecognitionMode: 'browser',
-      })
+        speechRecognitionMode: "browser",
+      });
     }
-  }, [realtimeAPIMode, audioMode])
+  }, [realtimeAPIMode, audioMode]);
 
   const whisperModels: { value: WhisperTranscriptionModel; label: string }[] =
     getOpenAIWhisperModels().map((m) => ({
       value: m as WhisperTranscriptionModel,
       label: m,
-    }))
+    }));
 
   // realtimeAPIモードかaudioモードがオンの場合はボタンを無効化
-  const isSpeechModeSwitchDisabled = realtimeAPIMode || audioMode
+  const isSpeechModeSwitchDisabled = realtimeAPIMode || audioMode;
 
   return (
     <div className="mb-10">
@@ -64,18 +64,18 @@ const SpeechInput = () => {
           height={24}
           className="mr-2"
         />
-        <h2 className="text-2xl font-bold">{t('SpeechInputSettings')}</h2>
+        <h2 className="text-2xl font-bold">{t("SpeechInputSettings")}</h2>
       </div>
       <div className="my-6">
         <div className="my-4 text-xl font-bold">
-          {t('SpeechRecognitionMode')}
+          {t("SpeechRecognitionMode")}
         </div>
         <div className="my-4 text-base whitespace-pre-line">
-          {t('SpeechRecognitionModeInfo')}
+          {t("SpeechRecognitionModeInfo")}
         </div>
         {isSpeechModeSwitchDisabled && (
           <div className="my-4 text-sm text-orange-500 whitespace-pre-line">
-            {t('SpeechRecognitionModeDisabledInfo')}
+            {t("SpeechRecognitionModeDisabledInfo")}
           </div>
         )}
         <div className="mt-2">
@@ -83,25 +83,25 @@ const SpeechInput = () => {
             onClick={() =>
               settingsStore.setState({
                 speechRecognitionMode:
-                  speechRecognitionMode === 'browser' ? 'whisper' : 'browser',
+                  speechRecognitionMode === "browser" ? "whisper" : "browser",
               })
             }
             disabled={isSpeechModeSwitchDisabled}
           >
-            {speechRecognitionMode === 'browser'
-              ? t('BrowserSpeechRecognition')
-              : t('WhisperSpeechRecognition')}
+            {speechRecognitionMode === "browser"
+              ? t("BrowserSpeechRecognition")
+              : t("WhisperSpeechRecognition")}
           </TextButton>
         </div>
       </div>
-      {speechRecognitionMode === 'whisper' && (
+      {speechRecognitionMode === "whisper" && (
         <>
           <div className="my-6">
             <div className="my-4 text-xl font-bold">
-              {t('OpenAIAPIKeyLabel')}
+              {t("OpenAIAPIKeyLabel")}
             </div>
             <div className="my-4">
-              {t('APIKeyInstruction')}
+              {t("APIKeyInstruction")}
               <br />
               <Link
                 url="https://platform.openai.com/account/api-keys"
@@ -120,10 +120,10 @@ const SpeechInput = () => {
           </div>
           <div className="mt-6">
             <div className="mb-4 text-xl font-bold">
-              {t('WhisperTranscriptionModel')}
+              {t("WhisperTranscriptionModel")}
             </div>
             <div className="mb-4 text-base whitespace-pre-line">
-              {t('WhisperTranscriptionModelInfo')}
+              {t("WhisperTranscriptionModelInfo")}
             </div>
             <select
               id="whisper-model-select"
@@ -145,18 +145,18 @@ const SpeechInput = () => {
           </div>
         </>
       )}
-      {speechRecognitionMode === 'browser' && !realtimeAPIMode && (
+      {speechRecognitionMode === "browser" && !realtimeAPIMode && (
         <>
           <div className="my-6">
             <div className="my-4 text-xl font-bold">
-              {t('InitialSpeechTimeout')}
+              {t("InitialSpeechTimeout")}
             </div>
             <div className="my-4 text-base whitespace-pre-line">
-              {t('InitialSpeechTimeoutInfo')}
+              {t("InitialSpeechTimeoutInfo")}
             </div>
             <div className="mt-6 font-bold">
               <div className="select-none">
-                {t('InitialSpeechTimeout')}: {initialSpeechTimeout.toFixed(1)}秒
+                {t("InitialSpeechTimeout")}: {initialSpeechTimeout.toFixed(1)}秒
               </div>
               <input
                 type="range"
@@ -174,13 +174,13 @@ const SpeechInput = () => {
             </div>
           </div>
           <div className="my-6">
-            <div className="my-4 text-xl font-bold">{t('NoSpeechTimeout')}</div>
+            <div className="my-4 text-xl font-bold">{t("NoSpeechTimeout")}</div>
             <div className="my-4 text-base whitespace-pre-line">
-              {t('NoSpeechTimeoutInfo')}
+              {t("NoSpeechTimeoutInfo")}
             </div>
             <div className="mt-6 font-bold">
               <div className="select-none">
-                {t('NoSpeechTimeout')}: {noSpeechTimeout.toFixed(1)}秒
+                {t("NoSpeechTimeout")}: {noSpeechTimeout.toFixed(1)}秒
               </div>
               <input
                 type="range"
@@ -198,7 +198,7 @@ const SpeechInput = () => {
             </div>
             <div className="mt-6">
               <div className="font-bold mb-2">
-                {t('ShowSilenceProgressBar')}
+                {t("ShowSilenceProgressBar")}
               </div>
               <TextButton
                 onClick={() =>
@@ -207,14 +207,14 @@ const SpeechInput = () => {
                   })
                 }
               >
-                {showSilenceProgressBar ? t('StatusOn') : t('StatusOff')}
+                {showSilenceProgressBar ? t("StatusOn") : t("StatusOff")}
               </TextButton>
             </div>
           </div>
           <div className="my-6">
-            <div className="my-4 text-xl font-bold">{t('ContinuousMic')}</div>
+            <div className="my-4 text-xl font-bold">{t("ContinuousMic")}</div>
             <div className="my-4 text-base whitespace-pre-line">
-              {t('ContinuousMicInfo')}
+              {t("ContinuousMicInfo")}
             </div>
             <TextButton
               onClick={() =>
@@ -223,13 +223,13 @@ const SpeechInput = () => {
                 })
               }
             >
-              {continuousMicListeningMode ? t('StatusOn') : t('StatusOff')}
+              {continuousMicListeningMode ? t("StatusOn") : t("StatusOff")}
             </TextButton>
           </div>
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SpeechInput
+export default SpeechInput;

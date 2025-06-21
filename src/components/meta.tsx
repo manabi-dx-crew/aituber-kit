@@ -1,10 +1,10 @@
-import { buildUrl } from '@/utils/buildUrl'
-import Head from 'next/head'
+import { buildUrl } from "@/utils/buildUrl";
+import Head from "next/head";
 export const Meta = () => {
-  const title = 'AITuberKit'
+  const title = "AITuberKit";
   const description =
-    'Webブラウザだけで誰でも簡単にAIキャラと会話したり、Youtubeで配信したりできます。'
-  const imageUrl = '/ogp.png'
+    "Webブラウザだけで誰でも簡単にAIキャラと会話したり、Youtubeで配信したりできます。";
+  const imageUrl = "/ogp.png";
   return (
     <Head>
       <title>{title}</title>
@@ -17,5 +17,5 @@ export const Meta = () => {
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
     </Head>
-  )
-}
+  );
+};

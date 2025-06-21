@@ -1,4 +1,4 @@
-import { Message } from '@/features/messages/messages'
+import { Message } from "@/features/messages/messages";
 
 /**
  * AIサービスとモデルに応じてメッセージを修正する
@@ -6,16 +6,16 @@ import { Message } from '@/features/messages/messages'
 export function modifyMessages(
   aiService: string,
   model: string,
-  messages: Message[]
+  messages: Message[],
 ): Message[] {
   if (
-    aiService === 'anthropic' ||
-    aiService === 'perplexity' ||
-    (aiService === 'deepseek' && model === 'deepseek-reasoner')
+    aiService === "anthropic" ||
+    aiService === "perplexity" ||
+    (aiService === "deepseek" && model === "deepseek-reasoner")
   ) {
-    return modifyAnthropicMessages(messages)
+    return modifyAnthropicMessages(messages);
   }
-  return messages
+  return messages;
 }
 
 /**
@@ -23,62 +23,62 @@ export function modifyMessages(
  */
 function modifyAnthropicMessages(messages: Message[]): Message[] {
   const systemMessage: Message | undefined = messages.find(
-    (message) => message.role === 'system'
-  )
+    (message) => message.role === "system",
+  );
   let userMessages = messages
-    .filter((message) => message.role !== 'system')
-    .filter((message) => message.content !== '')
+    .filter((message) => message.role !== "system")
+    .filter((message) => message.content !== "");
 
-  userMessages = consolidateMessages(userMessages)
+  userMessages = consolidateMessages(userMessages);
 
-  while (userMessages.length > 0 && userMessages[0].role !== 'user') {
-    userMessages.shift()
+  while (userMessages.length > 0 && userMessages[0].role !== "user") {
+    userMessages.shift();
   }
 
   const result: Message[] = systemMessage
     ? [systemMessage, ...userMessages]
-    : userMessages
-  return result
+    : userMessages;
+  return result;
 }
 
 /**
  * 同じroleのメッセージを結合する
  */
 export function consolidateMessages(messages: Message[]) {
-  const consolidated: Message[] = []
-  let lastRole: string | null = null
+  const consolidated: Message[] = [];
+  let lastRole: string | null = null;
   let combinedContent:
     | string
     | [
         {
-          type: 'text'
-          text: string
+          type: "text";
+          text: string;
         },
         {
-          type: 'image'
-          image: string
+          type: "image";
+          image: string;
         },
-      ]
+      ];
 
   messages.forEach((message, index) => {
     if (message.role === lastRole) {
-      if (typeof combinedContent === 'string') {
-        combinedContent += '\n' + message.content
+      if (typeof combinedContent === "string") {
+        combinedContent += "\n" + message.content;
       } else {
-        combinedContent[0].text += '\n' + message.content
+        combinedContent[0].text += "\n" + message.content;
       }
     } else {
       if (lastRole !== null) {
-        consolidated.push({ role: lastRole, content: combinedContent })
+        consolidated.push({ role: lastRole, content: combinedContent });
       }
-      lastRole = message.role
-      combinedContent = message.content || ''
+      lastRole = message.role;
+      combinedContent = message.content || "";
     }
 
     if (index === messages.length - 1) {
-      consolidated.push({ role: lastRole, content: combinedContent })
+      consolidated.push({ role: lastRole, content: combinedContent });
     }
-  })
+  });
 
-  return consolidated
+  return consolidated;
 }

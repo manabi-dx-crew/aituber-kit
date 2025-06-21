@@ -1,9 +1,9 @@
 export class OrbitControls {
   constructor(camera, domElement) {
-    this.camera = camera
-    this.domElement = domElement
-    this.enabled = true
-    this.target = { set: () => {}, copy: () => {} }
+    this.camera = camera;
+    this.domElement = domElement;
+    this.enabled = true;
+    this.target = { set: () => {}, copy: () => {} };
   }
 
   update() {}

@@ -1,18 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import type { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
 type Data = {
-  audio?: ArrayBuffer
-  error?: string
-}
+  audio?: ArrayBuffer;
+  error?: string;
+};
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data>,
 ) {
-  const { text, speaker, speed, pitch, intonation, serverUrl } = req.body
+  const { text, speaker, speed, pitch, intonation, serverUrl } = req.body;
   const apiUrl =
-    serverUrl || process.env.VOICEVOX_SERVER_URL || 'http://localhost:50021'
+    serverUrl || process.env.VOICEVOX_SERVER_URL || "http://localhost:50021";
 
   try {
     // 1. Audio Query の生成
@@ -21,16 +21,16 @@ export default async function handler(
       null,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         timeout: 30000,
-      }
-    )
+      },
+    );
 
-    const queryData = queryResponse.data
-    queryData.speedScale = speed
-    queryData.pitchScale = pitch
-    queryData.intonationScale = intonation
+    const queryData = queryResponse.data;
+    queryData.speedScale = speed;
+    queryData.pitchScale = pitch;
+    queryData.intonationScale = intonation;
 
     // 2. 音声合成
     const synthesisResponse = await axios.post(
@@ -38,18 +38,18 @@ export default async function handler(
       queryData,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'audio/wav',
+          "Content-Type": "application/json",
+          Accept: "audio/wav",
         },
-        responseType: 'stream',
+        responseType: "stream",
         timeout: 30000,
-      }
-    )
+      },
+    );
 
-    res.setHeader('Content-Type', 'audio/wav')
-    synthesisResponse.data.pipe(res)
+    res.setHeader("Content-Type", "audio/wav");
+    synthesisResponse.data.pipe(res);
   } catch (error) {
-    console.error('Error in VOICEVOX TTS:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error("Error in VOICEVOX TTS:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }

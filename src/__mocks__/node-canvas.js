@@ -15,26 +15,26 @@ const Canvas = jest.fn(() => ({
     scale: jest.fn(),
   })),
   toBuffer: jest.fn(() => Buffer.from([])),
-  toDataURL: jest.fn(() => ''),
+  toDataURL: jest.fn(() => ""),
   width: 100,
   height: 100,
-}))
+}));
 
 const createCanvas = jest.fn((width, height) => {
-  const canvas = new Canvas()
-  canvas.width = width || 100
-  canvas.height = height || 100
-  return canvas
-})
+  const canvas = new Canvas();
+  canvas.width = width || 100;
+  canvas.height = height || 100;
+  return canvas;
+});
 
 const Image = jest.fn(function () {
-  this.src = ''
-  this.onload = null
-  this.width = 0
-  this.height = 0
-})
+  this.src = "";
+  this.onload = null;
+  this.width = 0;
+  this.height = 0;
+});
 
-const loadImage = jest.fn(() => Promise.resolve(new Image()))
+const loadImage = jest.fn(() => Promise.resolve(new Image()));
 
 module.exports = {
   Canvas,
@@ -48,4 +48,4 @@ module.exports = {
   PNGStream: jest.fn(),
   JPEGStream: jest.fn(),
   PDFStream: jest.fn(),
-}
+};

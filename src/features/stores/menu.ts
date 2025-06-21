@@ -1,23 +1,23 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 type SettingsTabKey =
-  | 'description'
-  | 'based'
-  | 'character'
-  | 'ai'
-  | 'voice'
-  | 'speechInput'
-  | 'youtube'
-  | 'slide'
-  | 'log'
-  | 'other'
+  | "description"
+  | "based"
+  | "character"
+  | "ai"
+  | "voice"
+  | "speechInput"
+  | "youtube"
+  | "slide"
+  | "log"
+  | "other";
 interface MenuState {
-  showWebcam: boolean
-  showCapture: boolean
-  fileInput: HTMLInputElement | null
-  bgFileInput: HTMLInputElement | null
-  slideVisible: boolean
-  activeSettingsTab: SettingsTabKey
+  showWebcam: boolean;
+  showCapture: boolean;
+  fileInput: HTMLInputElement | null;
+  bgFileInput: HTMLInputElement | null;
+  slideVisible: boolean;
+  activeSettingsTab: SettingsTabKey;
 }
 
 const menuStore = create<MenuState>((set, get) => ({
@@ -26,7 +26,7 @@ const menuStore = create<MenuState>((set, get) => ({
   fileInput: null,
   bgFileInput: null,
   slideVisible: false,
-  activeSettingsTab: 'description',
-}))
+  activeSettingsTab: "description",
+}));
 
-export default menuStore
+export default menuStore;

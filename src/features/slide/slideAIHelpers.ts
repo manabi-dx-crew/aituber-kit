@@ -1,19 +1,19 @@
-import { getVercelAIChatResponse } from '@/features/chat/vercelAIChat'
-import settingsStore from '@/features/stores/settings'
-import { isMultiModalModel } from '@/features/constants/aiModels'
+import { getVercelAIChatResponse } from "@/features/chat/vercelAIChat";
+import settingsStore from "@/features/stores/settings";
+import { isMultiModalModel } from "@/features/constants/aiModels";
 
 export const judgeSlide = async (
   queryText: string,
   scripts: string,
-  supplement: string
+  supplement: string,
 ): Promise<string> => {
-  const ss = settingsStore.getState()
-  const aiService = ss.selectAIService
-  const aiModel = ss.selectAIModel
+  const ss = settingsStore.getState();
+  const aiService = ss.selectAIService;
+  const aiModel = ss.selectAIModel;
 
   // 現在選択されているモデルがマルチモーダル対応かチェック
   if (!isMultiModalModel(aiService, aiModel)) {
-    throw new Error('Selected model does not support multimodal features')
+    throw new Error("Selected model does not support multimodal features");
   }
 
   const systemMessage = `
@@ -50,11 +50,11 @@ ${supplement}
 </document>
 
 Based on the user's comment and the content of both the script document and supplementary text, provide "only" your final answer in the specified JSON format.
-`
+`;
 
   const response = await getVercelAIChatResponse([
-    { role: 'system', content: systemMessage },
-    { role: 'user', content: queryText },
-  ])
-  return response.text
-}
+    { role: "system", content: systemMessage },
+    { role: "user", content: queryText },
+  ]);
+  return response.text;
+};

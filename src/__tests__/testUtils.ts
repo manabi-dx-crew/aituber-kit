@@ -1,16 +1,16 @@
 export async function consumeStream(
-  stream: ReadableStream<string>
+  stream: ReadableStream<string>,
 ): Promise<string> {
-  const reader = stream.getReader()
-  let result = ''
+  const reader = stream.getReader();
+  let result = "";
   while (true) {
-    const { done, value } = await reader.read()
+    const { done, value } = await reader.read();
     if (done) {
-      break
+      break;
     }
     if (value) {
-      result += value
+      result += value;
     }
   }
-  return result
+  return result;
 }

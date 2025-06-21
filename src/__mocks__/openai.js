@@ -4,6 +4,6 @@ const mockOpenAI = jest.fn().mockImplementation(() => ({
       create: jest.fn(),
     },
   },
-}))
+}));
 
-export default mockOpenAI
+export default mockOpenAI;

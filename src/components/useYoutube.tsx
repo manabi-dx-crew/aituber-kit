@@ -1,20 +1,20 @@
-import { useCallback, useEffect } from 'react'
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import { fetchAndProcessComments } from '@/features/youtube/youtubeComments'
+import { useCallback, useEffect } from "react";
+import homeStore from "@/features/stores/home";
+import settingsStore from "@/features/stores/settings";
+import { fetchAndProcessComments } from "@/features/youtube/youtubeComments";
 
-const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 10000 // 10秒
+const INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS = 10000; // 10秒
 
 interface Params {
-  handleSendChat: (text: string) => Promise<void>
+  handleSendChat: (text: string) => Promise<void>;
 }
 
 const useYoutube = ({ handleSendChat }: Params) => {
-  const youtubePlaying = settingsStore((s) => s.youtubePlaying)
+  const youtubePlaying = settingsStore((s) => s.youtubePlaying);
 
   const fetchAndProcessCommentsCallback = useCallback(async () => {
-    const ss = settingsStore.getState()
-    const hs = homeStore.getState()
+    const ss = settingsStore.getState();
+    const hs = homeStore.getState();
 
     if (
       !ss.youtubeLiveId ||
@@ -24,23 +24,23 @@ const useYoutube = ({ handleSendChat }: Params) => {
       !ss.youtubeMode ||
       !ss.youtubePlaying
     ) {
-      return
+      return;
     }
 
-    console.log('Call fetchAndProcessComments !!!')
-    await fetchAndProcessComments(handleSendChat)
-  }, [handleSendChat])
+    console.log("Call fetchAndProcessComments !!!");
+    await fetchAndProcessComments(handleSendChat);
+  }, [handleSendChat]);
 
   useEffect(() => {
-    if (!youtubePlaying) return
-    fetchAndProcessCommentsCallback()
+    if (!youtubePlaying) return;
+    fetchAndProcessCommentsCallback();
 
     const intervalId = setInterval(() => {
-      fetchAndProcessCommentsCallback()
-    }, INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS)
+      fetchAndProcessCommentsCallback();
+    }, INTERVAL_MILL_SECONDS_RETRIEVING_COMMENTS);
 
-    return () => clearInterval(intervalId)
-  }, [youtubePlaying, fetchAndProcessCommentsCallback])
-}
+    return () => clearInterval(intervalId);
+  }, [youtubePlaying, fetchAndProcessCommentsCallback]);
+};
 
-export default useYoutube
+export default useYoutube;

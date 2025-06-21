@@ -1,89 +1,89 @@
-import { Message } from './messages'
-import settingsStore from '@/features/stores/settings'
+import { Message } from "./messages";
+import settingsStore from "@/features/stores/settings";
 
 export const messageSelectors = {
   // テキストまたは画像を含むメッセージのみを取得
   getTextAndImageMessages: (messages: Message[]): Message[] => {
     return messages.filter((message): boolean => {
-      if (!message.content) return false
+      if (!message.content) return false;
       return (
-        typeof message.content === 'string' || Array.isArray(message.content)
-      )
-    })
+        typeof message.content === "string" || Array.isArray(message.content)
+      );
+    });
   },
 
   // 音声メッセージのみを取得
   getAudioMessages: (messages: Message[]): Message[] => {
     return messages.filter((message) => {
-      if (message.role === 'system') {
-        return message.content
+      if (message.role === "system") {
+        return message.content;
       }
       // userの場合：contentがstring型のメッセージのみを許可
-      if (message.role === 'user') {
-        return typeof message.content === 'string'
+      if (message.role === "user") {
+        return typeof message.content === "string";
       }
       // assistantの場合：audioプロパティを持つメッセージのみを許可
-      if (message.role === 'assistant') {
-        return message.audio !== undefined
+      if (message.role === "assistant") {
+        return message.audio !== undefined;
       }
       // その他のroleは除外
-      return false
-    })
+      return false;
+    });
   },
 
   // メッセージを処理して、テキストメッセージのみを取得
   getProcessedMessages: (
     messages: Message[],
-    includeTimestamp: boolean
+    includeTimestamp: boolean,
   ): Message[] => {
-    const maxPastMessages = settingsStore.getState().maxPastMessages
+    const maxPastMessages = settingsStore.getState().maxPastMessages;
     return messages
       .map((message, index) => {
         // 最後のメッセージだけそのまま利用する（= 最後のメッセージだけマルチモーダルの対象となる）
-        const isLastMessage = index === messages.length - 1
+        const isLastMessage = index === messages.length - 1;
         const messageText = Array.isArray(message.content)
           ? message.content[0].text
-          : message.content || ''
+          : message.content || "";
 
-        let content: Message['content']
+        let content: Message["content"];
         if (includeTimestamp) {
           content = message.timestamp
             ? `[${message.timestamp}] ${messageText}`
-            : messageText
+            : messageText;
           if (isLastMessage && Array.isArray(message.content)) {
             content = [
-              { type: 'text', text: content },
-              { type: 'image', image: message.content[1].image },
-            ]
+              { type: "text", text: content },
+              { type: "image", image: message.content[1].image },
+            ];
           }
         } else {
-          content = isLastMessage ? message.content : messageText
+          content = isLastMessage ? message.content : messageText;
         }
 
         return {
-          role: ['assistant', 'user', 'system'].includes(message.role)
+          role: ["assistant", "user", "system"].includes(message.role)
             ? message.role
-            : 'assistant',
+            : "assistant",
           content,
-        }
+        };
       })
-      .slice(-maxPastMessages)
+      .slice(-maxPastMessages);
   },
 
   normalizeMessages: (messages: Message[]): Message[] => {
-    let lastImageUrl = ''
+    let lastImageUrl = "";
     return messages
       .reduce((acc: Message[], item: Message) => {
         if (
           item.content &&
-          typeof item.content != 'string' &&
+          typeof item.content != "string" &&
           item.content[0] &&
           item.content[1]
         ) {
-          lastImageUrl = item.content[1].image
+          lastImageUrl = item.content[1].image;
         }
 
-        const lastItem = acc[acc.length - 1]
+        const lastItem = acc[acc.length - 1];
         if (
           lastItem &&
           lastItem.role === item.role &&
@@ -91,50 +91,50 @@ export const messageSelectors = {
           item.id !== undefined &&
           lastItem.id === item.id
         ) {
-          if (typeof item.content !== 'string' && item.content?.[0]?.text) {
+          if (typeof item.content !== "string" && item.content?.[0]?.text) {
             const currentText =
-              typeof lastItem.content === 'string'
+              typeof lastItem.content === "string"
                 ? lastItem.content
-                : lastItem.content?.[0]?.text || ''
+                : lastItem.content?.[0]?.text || "";
             if (Array.isArray(lastItem.content)) {
               lastItem.content[0].text =
-                currentText + ' ' + item.content[0].text
+                currentText + " " + item.content[0].text;
             } else {
-              lastItem.content = currentText + ' ' + item.content[0].text
+              lastItem.content = currentText + " " + item.content[0].text;
             }
-          } else if (typeof item.content === 'string') {
+          } else if (typeof item.content === "string") {
             const currentText =
-              typeof lastItem.content === 'string'
+              typeof lastItem.content === "string"
                 ? lastItem.content
-                : lastItem.content?.[0]?.text || ''
+                : lastItem.content?.[0]?.text || "";
             if (Array.isArray(lastItem.content)) {
-              lastItem.content[0].text = currentText + ' ' + item.content
+              lastItem.content[0].text = currentText + " " + item.content;
             } else {
-              lastItem.content = currentText + ' ' + item.content
+              lastItem.content = currentText + " " + item.content;
             }
           }
         } else {
           const text = item.content
-            ? typeof item.content != 'string'
+            ? typeof item.content != "string"
               ? item.content[0].text
               : item.content
-            : ''
-          if (lastImageUrl != '') {
+            : "";
+          if (lastImageUrl != "") {
             acc.push({
               ...item,
               content: [
-                { type: 'text', text: text.trim() },
-                { type: 'image', image: lastImageUrl },
+                { type: "text", text: text.trim() },
+                { type: "image", image: lastImageUrl },
               ],
-            })
-            lastImageUrl = ''
+            });
+            lastImageUrl = "";
           } else {
-            acc.push({ ...item, content: text.trim() })
+            acc.push({ ...item, content: text.trim() });
           }
         }
-        return acc
+        return acc;
       }, [])
-      .filter((item) => item.content !== '')
+      .filter((item) => item.content !== "");
   },
 
   // 画像メッセージをテキストメッセージに変換
@@ -143,11 +143,11 @@ export const messageSelectors = {
       ...message,
       content:
         message.content === undefined
-          ? ''
-          : typeof message.content === 'string'
+          ? ""
+          : typeof message.content === "string"
             ? message.content
             : message.content[0].text,
-    }))
+    }));
   },
 
   // APIで保存する際のメッセージ処理
@@ -155,24 +155,24 @@ export const messageSelectors = {
     if (message.audio !== undefined) {
       return {
         ...message,
-        audio: '[audio data omitted]',
-      }
+        audio: "[audio data omitted]",
+      };
     }
 
     if (message.content && Array.isArray(message.content)) {
       return {
         ...message,
         content: message.content.map((content: any) => {
-          if (content.type === 'image') {
+          if (content.type === "image") {
             return {
-              type: 'image',
-              image: '[image data omitted]',
-            }
+              type: "image",
+              image: "[image data omitted]",
+            };
           }
-          return content
+          return content;
         }),
-      }
+      };
     }
-    return message
+    return message;
   },
-}
+};
