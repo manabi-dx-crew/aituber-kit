@@ -31,25 +31,13 @@ export default async function handler(req: NextRequest) {
     )
   }
   const cleanUrl = (url: string) => {
-    let trimmedUrl = url.replace(/\/$/, '') // Remove trailing slash
-
-    // Remove port 80 if present (since your Dify runs on default port)
-    trimmedUrl = trimmedUrl.replace(':80', '')
-
-    // Ensure the URL ends with /v1/chat-messages
-    if (trimmedUrl.endsWith('/v1')) {
-      trimmedUrl = `${trimmedUrl}/chat-messages`
-    } else if (!trimmedUrl.endsWith('/v1/chat-messages')) {
-      // If '/v1' is missing or structure is different, append /v1/chat-messages
-      // This part might need to be more robust depending on expected URL variations
-      if (trimmedUrl.includes('/v1')) {
-        const parts = trimmedUrl.split('/v1')
-        trimmedUrl = `${parts[0]}/v1/chat-messages`
-      } else {
-        trimmedUrl = `${trimmedUrl}/v1/chat-messages`
-      }
+    let finalUrl = url.replace(/\/+$/, '') // Remove trailing slashes
+    if (finalUrl.endsWith('/v1')) {
+      finalUrl = `${finalUrl}/chat-messages`
+    } else if (!finalUrl.endsWith('/v1/chat-messages')) {
+      finalUrl = `${finalUrl}/v1/chat-messages`
     }
-    return trimmedUrl
+    return finalUrl
   }
   const difyUrl = url
     ? cleanUrl(url)
@@ -89,8 +77,8 @@ export default async function handler(req: NextRequest) {
     inputs: {},
     query: query,
     response_mode: stream ? 'streaming' : 'blocking',
-    conversation_id: '',
-    user: 'abc-123', // Match your curl command
+    conversation_id: conversationId || '',
+    user: process.env.DIFY_USER_ID || 'AITuberKit',
     files: [],
   })
 

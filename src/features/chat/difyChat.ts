@@ -2,6 +2,7 @@ import settingsStore from '@/features/stores/settings'
 import { Message } from '../messages/messages'
 import i18next from 'i18next'
 import toastStore from '@/features/stores/toast'
+import { buildUrl } from '@/utils/buildUrl'
 
 function handleApiError(errorCode: string): string {
   const languageCode = settingsStore.getState().selectLanguage
@@ -15,17 +16,17 @@ export async function getDifyChatResponseStream(
   url: string,
   conversationId: string
 ): Promise<ReadableStream<string>> {
-  const response = await fetch('/api/difyChat', {
+  const response = await fetch(buildUrl('/api/difyChat'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: messages[messages.length - 1].content,
-      apiKey,
-      url,
-      conversationId,
       stream: true,
+      conversation_id: conversationId,
+      apiKey: apiKey,
+      url: url,
     }),
   })
 

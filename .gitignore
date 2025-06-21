@@ -72,3 +72,8 @@ public/scripts/*
 !/public/backgrounds/bg-office-manager.png
 !/public/backgrounds/bg-office-white.png
 !/public/backgrounds/bg-Virtual-office.png
+
+
+
+.specstory/*
+!.specstory/.gitkeep
