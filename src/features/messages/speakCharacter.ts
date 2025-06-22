@@ -191,8 +191,14 @@ const createSpeakCharacter = () => {
     onComplete?: () => void,
   ) => {
     const chatLog = homeStore.getState().chatLog;
-    const lastUserMessage = [...chatLog].reverse().find((log) => log.role === 'user');
-    if (lastUserMessage && typeof lastUserMessage.content === 'string' && lastUserMessage.content.includes("昨日の日次KPTレポート")) {
+    const lastUserMessage = [...chatLog]
+      .reverse()
+      .find((log) => log.role === "user");
+    if (
+      lastUserMessage &&
+      typeof lastUserMessage.content === "string" &&
+      lastUserMessage.content.includes("昨日の日次KPTレポート")
+    ) {
       if (kptGreetingSessionId !== sessionId) {
         kptGreetingSessionId = sessionId;
         talk = { ...talk, message: "日次KPTレポートだよ。読んでみてね" };
