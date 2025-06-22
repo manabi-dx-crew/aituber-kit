@@ -182,6 +182,7 @@ async function synthesizeVoice(
 const createSpeakCharacter = () => {
   let lastTime = 0;
   let prevFetchPromise: Promise<unknown> = Promise.resolve();
+  let kptGreetingSessionId: string | null = null;
 
   return (
     sessionId: string,
@@ -189,6 +190,18 @@ const createSpeakCharacter = () => {
     onStart?: () => void,
     onComplete?: () => void,
   ) => {
+    const chatLog = homeStore.getState().chatLog;
+    const lastUserMessage = [...chatLog].reverse().find((log) => log.role === 'user');
+    if (lastUserMessage && typeof lastUserMessage.content === 'string' && lastUserMessage.content.includes("昨日の日次KPTレポート")) {
+      if (kptGreetingSessionId !== sessionId) {
+        kptGreetingSessionId = sessionId;
+        talk = { ...talk, message: "日次KPTレポートだよ。読んでみてね" };
+      } else {
+        onComplete?.();
+        return;
+      }
+    }
+
     let called = false;
     const ss = settingsStore.getState();
     onStart?.();
