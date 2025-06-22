@@ -320,5 +320,11 @@
   "DynamicRetrieval": "Dynamic Search",
   "OpenRouterModelNameInstruction": "Please enter the model identifier from OpenRouter (e.g., \"openai/gpt-4o\", \"mistralai/mistral-large-latest\"). You can check the model identifier on the OpenRouter model page.",
   "DynamicRetrievalThreshold": "Dynamic threshold",
-  "OpenRouterAPIKeyLabel": "OpenRouter API Key"
+  "OpenRouterAPIKeyLabel": "OpenRouter API Key",
+  "VideoConversionCompleted": "Video conversion completed.",
+  "UnsupportedFileFormat": "Unsupported file format.",
+  "UnsupportedFileType": "Unsupported file type.",
+  "LongResponseNotification": "This is what it looks like. Please read it.",
+  "Settings": "Settings",
+  "BasicSettings": "Basic Settings"
 }

@@ -320,5 +320,11 @@
   "PositionFixed": "固定中",
   "OpenRouterAPIKeyLabel": "OpenRouter API密钥",
   "CharacterPositionInfo": "可以固定角色的位置和朝向。VRM保存摄像机位置，Live2D保存模型位置。",
-  "UnfixPosition": "取消固定"
+  "UnfixPosition": "取消固定",
+  "VideoConversionCompleted": "Video conversion completed.",
+  "UnsupportedFileFormat": "Unsupported file format.",
+  "UnsupportedFileType": "Unsupported file type.",
+  "LongResponseNotification": "This is what it looks like. Please read it.",
+  "Settings": "设置",
+  "BasicSettings": "基本设置"
 }

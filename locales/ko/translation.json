@@ -320,5 +320,11 @@
   "PositionFixed": "고정 중",
   "OpenRouterAPIKeyLabel": "OpenRouter API 키",
   "CharacterPositionInfo": "캐릭터의 위치와 방향을 고정할 수 있습니다. VRM은 카메라 위치, Live2D는 모델 위치가 저장됩니다.",
-  "UnfixPosition": "고정 해제"
+  "UnfixPosition": "고정 해제",
+  "VideoConversionCompleted": "Video conversion completed.",
+  "UnsupportedFileFormat": "Unsupported file format.",
+  "UnsupportedFileType": "Unsupported file type.",
+  "LongResponseNotification": "This is what it looks like. Please read it.",
+  "Settings": "설정",
+  "BasicSettings": "기본 설정"
 }

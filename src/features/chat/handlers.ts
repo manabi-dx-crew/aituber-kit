@@ -117,6 +117,30 @@ const handleSpeakAndStateUpdate = (
  */
 export const speakMessageHandler = async (receivedMessage: string) => {
   const sessionId = generateSessionId();
+
+  // 感情タグなどを除いたテキストで文字数カウント
+  const regex = /\[(emote|tempEmote|expression|style):([^\]]+)\]/g;
+  const textForCounting = receivedMessage.replace(regex, "");
+
+  if (textForCounting.length > 200) {
+    speakCharacter(
+      sessionId,
+      {
+        message: "こんな感じかな？読んでみて。",
+        emotion: "neutral",
+      },
+      () => {},
+      () => {},
+    );
+    // メッセージ全体をログに追加
+    homeStore.getState().upsertMessage({
+      role: "assistant",
+      content: receivedMessage,
+    });
+    homeStore.setState({ chatProcessing: false });
+    return; // ここで処理を終了
+  }
+
   const currentSlideMessagesRef = { current: [] as string[] };
   const assistantMessageListRef = { current: [] as string[] };
 
