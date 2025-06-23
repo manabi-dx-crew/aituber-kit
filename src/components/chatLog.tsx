@@ -322,7 +322,7 @@ const Chat = ({
           <div
             className={`px-6 py-2 rounded-t-lg font-bold tracking-wider ${roleColor}`}
           >
-            {role !== "user" ? characterName || "CHARACTER" : "YOU"}
+            {role !== "user" ? characterName || "CHARACTER" : "あなた"}
           </div>
           <div className="px-6 py-4 bg-white rounded-b-lg">
             <div className={`text-base font-bold ${roleText}`}>
