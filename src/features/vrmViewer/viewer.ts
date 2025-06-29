@@ -55,6 +55,12 @@ export class Viewer {
         obj.frustumCulled = false;
       });
 
+      // アバターを右側にシフト
+      this.model.vrm.scene.position.set(1.2, 0, 0);
+
+      // アバターの回転設定（Y軸で左右回転）
+      this.model.vrm.scene.rotation.y = Math.PI * 0.87; // 18度右向きに回転
+
       this._scene.add(this.model.vrm.scene);
 
       const vrma = await loadVRMAnimation(buildUrl("/idle_loop.vrma"));
@@ -92,7 +98,7 @@ export class Viewer {
 
     // camera
     this._camera = new THREE.PerspectiveCamera(20.0, width / height, 0.1, 20.0);
-    this._camera.position.set(0, 1.3, 1.5);
+    this._camera.position.set(0, 1.3, 4.0); // Z座標を3.0に変更（カメラを遠くに）
     this._cameraControls?.target.set(0, 1.3, 0);
     this._cameraControls?.update();
     // camera controls
@@ -156,12 +162,14 @@ export class Viewer {
 
     if (headNode) {
       const headWPos = headNode.getWorldPosition(new THREE.Vector3());
+      // アバターが右側に配置されている場合でも、カメラは中央を向くように調整
       this._camera?.position.set(
         this._camera.position.x,
         headWPos.y,
         this._camera.position.z,
       );
-      this._cameraControls?.target.set(headWPos.x, headWPos.y, headWPos.z);
+      // ターゲットは常に画面中央の高さに設定（アバターの実際の位置に関係なく）
+      this._cameraControls?.target.set(0, headWPos.y, 0); // X座標をアバターの位置に合わせる
       this._cameraControls?.update();
     }
   }

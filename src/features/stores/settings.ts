@@ -343,7 +343,7 @@ const settingsStore = create<SettingsState>()(
         process.env.NEXT_PUBLIC_CHARACTER_PRESET1 ||
         SYSTEM_PROMPT,
       selectedVrmPath:
-        process.env.NEXT_PUBLIC_SELECTED_VRM_PATH || "/vrm/blue_suit_boy.vrm",
+        process.env.NEXT_PUBLIC_SELECTED_VRM_PATH || "/vrm/suit_girl.vrm",
       selectedLive2DPath:
         process.env.NEXT_PUBLIC_SELECTED_LIVE2D_PATH ||
         "/live2d/nike01/nike01.model3.json",
@@ -437,7 +437,9 @@ const settingsStore = create<SettingsState>()(
         parseFloat(process.env.NEXT_PUBLIC_INITIAL_SPEECH_TIMEOUT || "5.0") ||
         5.0,
       chatLogWidth:
-        parseFloat(process.env.NEXT_PUBLIC_CHAT_LOG_WIDTH || "400") || 400,
+        typeof window !== "undefined"
+          ? Math.min(window.innerWidth * 0.5, 1000)
+          : parseFloat(process.env.NEXT_PUBLIC_CHAT_LOG_WIDTH || "1000") || 900,
 
       // NijiVoice settings
       nijivoiceApiKey: "",
@@ -486,6 +488,21 @@ const settingsStore = create<SettingsState>()(
           if (migratedModel !== state.selectAIModel) {
             state.selectAIModel = migratedModel;
           }
+        }
+        // vrmの移行
+        if (state && state.selectedVrmPath === "/vrm/nikechan_v1.vrm") {
+          state.selectedVrmPath = "/vrm/suit_girl.vrm";
+        }
+        // nikechan_v2.vrmの移行
+        if (state && state.selectedVrmPath === "/vrm/nikechan_v2.vrm") {
+          state.selectedVrmPath = "/vrm/suit_girl.vrm";
+        }
+        // nikechan_v2_outerwear.vrmの移行
+        if (
+          state &&
+          state.selectedVrmPath === "/vrm/nikechan_v2_outerwear.vrm"
+        ) {
+          state.selectedVrmPath = "/vrm/suit_girl.vrm";
         }
       },
       partialize: (state) => ({
