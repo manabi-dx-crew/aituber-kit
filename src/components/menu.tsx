@@ -52,7 +52,7 @@ export const Menu = () => {
   const showAssistantText = settingsStore((s) => s.showAssistantText);
 
   const [showSettings, setShowSettings] = useState(false);
-  const [showChatLog, setShowChatLog] = useState(false);
+  const [showChatLog, setShowChatLog] = useState(true);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const imageFileInputRef = useRef<HTMLInputElement>(null);
 
